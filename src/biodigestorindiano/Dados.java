@@ -6,6 +6,8 @@ package biodigestorindiano;
  */
 public class Dados extends javax.swing.JFrame {
 
+    final int numTextField = 5;
+    javax.swing.JTextField[] entradas;
     /**
      * Creates new form Principal
      */
@@ -284,15 +286,13 @@ public class Dados extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
-    javax.swing.JTextField[] entradas = new javax.swing.JTextField[16];
-    
-    
     private void inicializaVetEntradas(){
-        entradas[0] = jTextField17;
-        entradas[1] = jTextField2;
-        entradas[2] = jTextField14;
-        entradas[3] = jTextField15;
-        entradas[4] = jTextField16;
+        entradas = new javax.swing.JTextField[numTextField];
+        entradas[0] = jTextField17; //Frequência (dias) de retirada dos resíduos
+        entradas[1] = jTextField2;  //Número de pessoas que usarão o biogás
+        entradas[2] = jTextField14; //Número de lampiões
+        entradas[3] = jTextField15; //Tempo (horas) de uso dos lampiões
+        entradas[4] = jTextField16; //Número de chuveiros
         
     }
     
@@ -300,9 +300,9 @@ public class Dados extends javax.swing.JFrame {
         jComboBox1.setSelectedIndex(4);
         entradas[0].setText("50");
         entradas[1].setText("5");
-        jSpinner1.setValue(new Integer(1));
+        jSpinner1.setValue(1);
         atualiza_tabela();
-        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        javax.swing.table.TableModel modelo = jTable1.getModel();
         modelo.setValueAt(5,0,0);
         modelo.setValueAt(1,0,1);
         entradas[2].setText("6");
@@ -321,22 +321,24 @@ public class Dados extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        double[] x = new double[2];
-        double K = 2.5, B, Vp, Vb, Vr, Vg, V, V1, V2, v, Di, H, Dg, Ds, Db, De, h, h1, h2, a, b, e2, p, esp, E, Pg, r, tensao = 750,n;
+        final int COZIMENTO = 0, MOTOR = 1, ILUMINACAO = 2, BANHO = 3;
+        double[] x;
+        double[] vetK = new double[] {3, 1.5, 4.5, 6, 2.5};
+        double K, B, Vp, Vb, Vr, Vg, V, V1, V2, v, Di, H, Dg, Ds, Db, De, h, h1, h2, a, b, e2, p, esp, E, Pg, r, tensao = 750, n;
         //tensao = tensão de tração adimíssível do material da parede do gasômetro (kgf/cm²)
-        double xKB, producaoHoraria;
-        int COZIMENTO = 0, MOTOR = 1, ILUMINACAO = 2, BANHO = 3;
-        double cozimentoTotal=0, motorTotal=0, iluminacaoTotal=0, banhoTotal=0;
+        double producaoHoraria;
+        double cozimentoTotal, motorTotal, iluminacaoTotal, banhoTotal;
         double taxaCozimento, taxaMotor, taxaIluminacao, taxaBanho;
-        int qtdCozimento=0, qtdMotor=0, qtdIluminacao=0, qtdBanho=0;
-        double[] vetConsumo = new double[] {0.42, 0.45, 0.08, 0.74 }; //cozimento,motor,
-        boolean test;
-        int intervalos;
-        double[] valores = new double[5];
+        int qtdCozimento, qtdMotor, qtdIluminacao, qtdBanho;
+        double[] vetConsumo = new double[] { 0.42, 0.45, 0.08, 0.74 }; //cozimento,motor,
+        boolean test = true;
+        //int intervalos;
+        double[] valores = new double[numTextField];
+        final javax.swing.table.TableModel modelo =  jTable1.getModel(); //Tabela de motores
+        double[][] matriz = new double[Integer.parseInt(jSpinner1.getValue().toString())][2]; //Matriz para os valores da tabela de motores
         
-        test = true;
-        
-        for(int i = 0; i < 5 && test; i++){
+        //Leitura das caixas de texto
+        for(int i = 0; i < numTextField && test; i++){
             try {
                 if(entradas[i].getText().isEmpty())
                     valores[i] = 0;
@@ -344,69 +346,47 @@ public class Dados extends javax.swing.JFrame {
                     valores[i] = Double.parseDouble(entradas[i].getText());
             } catch (NumberFormatException e) {
                 test = false;
+                entradas[i].requestFocus();
             }
         }
-        if(test){
-            javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-            double[][] matriz = new double[Integer.parseInt(jSpinner1.getValue().toString())][2];
-            
-            cozimentoTotal = vetConsumo[COZIMENTO]*valores[1];
-            
-            for(int i = 0; i < Integer.parseInt(jSpinner1.getValue().toString()); i++){
-                try {
-                    if(modelo.getValueAt(i, 0).toString().isEmpty())
-                        matriz[i][0] = 0;
-                    else
-                        matriz[i][0] = Double.parseDouble(modelo.getValueAt(i, 0).toString());
-                    
-                    if(modelo.getValueAt(i, 1).toString().isEmpty())
-                        matriz[i][1] = 0;
-                    else
-                        matriz[i][1] = Double.parseDouble(modelo.getValueAt(i, 1).toString());
-                } catch (NumberFormatException e) {
-                    test = false;
-                }
-            }
 
+        //Leitura da tabela de motores
+        for(int i = 0; i < Integer.parseInt(jSpinner1.getValue().toString()) && test; i++){
+            try {
+                if(modelo.getValueAt(i, 0).toString().isEmpty())
+                    matriz[i][0] = 0;
+                else
+                    matriz[i][0] = Double.parseDouble(modelo.getValueAt(i, 0).toString());
+
+                if(modelo.getValueAt(i, 1).toString().isEmpty())
+                    matriz[i][1] = 0;
+                else
+                    matriz[i][1] = Double.parseDouble(modelo.getValueAt(i, 1).toString());
+            } catch (NumberFormatException e) {
+                test = false;
+            }
+        }
+        
+        if(test){
+            cozimentoTotal = vetConsumo[COZIMENTO] * valores[1];
+            motorTotal = 0;
             
             for(int i = 0; i < Integer.parseInt(jSpinner1.getValue().toString()); i++)
-                motorTotal += vetConsumo[MOTOR]*matriz[i][0]*matriz[i][1];
+                motorTotal += vetConsumo[MOTOR] * matriz[i][0] * matriz[i][1];
                 
-
-            iluminacaoTotal += vetConsumo[ILUMINACAO]*valores[2]*valores[3];
-            banhoTotal += vetConsumo[BANHO]*valores[1];
+            iluminacaoTotal = banhoTotal = 0;
+            iluminacaoTotal += vetConsumo[ILUMINACAO] * valores[2] * valores[3];
+            banhoTotal += vetConsumo[BANHO] * valores[1];
             
             B = cozimentoTotal + motorTotal + iluminacaoTotal + banhoTotal;
             
-            switch(jComboBox1.getSelectedIndex()){
-                case 0:
-                    //K = 2.5;//teste
-                    K = 3;
-                    break;
-                case 1:
-                    K = 1.5;
-                    break;
-                case 2:
-                    K = 4.5;
-                    break;
-                case 3:
-                    K = 6;
-                    break;
-                case 4:
-                    K = 2.5;
-            }
-            
-            V = K*B;
-            Vb = V*1.1;
-            xKB = Vb;
-            
-            if(xKB == 0)
-                test=false;
-            
-            if(test){
+            if(B != 0){           
+                K = vetK[jComboBox1.getSelectedIndex()];
+                V = K * B;
+                Vb = V * 1.1;
 
                 OtimizaBiodigestor otimo = new OtimizaBiodigestor();
-                otimo.set_xKB(xKB);
+                otimo.set_Vb(Vb);
                 otimo.set_mi(0.0001);
                 otimo.set_Prints(false);
                 //long inicio = System.currentTimeMillis();
@@ -418,7 +398,7 @@ public class Dados extends javax.swing.JFrame {
                 Di = x[0];
                 H = x[1];
 
-                producaoHoraria = B/24;
+                producaoHoraria = B / 24;
 
                 if(horarios == null)
                     test = false;
@@ -426,12 +406,12 @@ public class Dados extends javax.swing.JFrame {
                     if(tabelaHorarios == null)
                         tabelaHorarios = horarios.getTabela();
 
-                    intervalos = 0;
+                    //intervalos = 0;
                     for(int i = 0; i < tabelaHorarios.length && test; i++){
                         if(tabelaHorarios[i][0] == tabelaHorarios[i][1] && tabelaHorarios.length > 1)
                             test = false;
-                        else
-                            intervalos++;
+                        //else
+                            //intervalos++;
                     }
                 }
 
@@ -449,19 +429,19 @@ public class Dados extends javax.swing.JFrame {
                     }
 
                     if(qtdCozimento != 0)
-                        taxaCozimento = cozimentoTotal/qtdCozimento;
+                        taxaCozimento = cozimentoTotal / qtdCozimento;
                     else
                         taxaCozimento = 0;
                     if(qtdMotor != 0)
-                        taxaMotor = motorTotal/qtdMotor;
+                        taxaMotor = motorTotal / qtdMotor;
                     else
                         taxaMotor = 0;
                     if(qtdIluminacao != 0)
-                        taxaIluminacao = iluminacaoTotal/qtdIluminacao;
+                        taxaIluminacao = iluminacaoTotal / qtdIluminacao;
                     else
                         taxaIluminacao = 0;
                     if(qtdBanho != 0)
-                        taxaBanho = banhoTotal/qtdBanho;
+                        taxaBanho = banhoTotal / qtdBanho;
                     else
                         taxaBanho = 0;
 
@@ -503,12 +483,14 @@ public class Dados extends javax.swing.JFrame {
                     */
 
                     double maior = quadroProducao[0][1], menor = quadroProducao[0][4];
+                    
                     for(int i = 1; i < quadroProducao.length; i++){
                         if(quadroProducao[i][1] > maior)
                             maior = quadroProducao[i][1];
                         if(quadroProducao[i][4] < menor)
                             menor = quadroProducao[i][4];
                     }
+                    
                     V2 = maior;
                     if(menor < 0)
                         V2 -= menor;
@@ -517,54 +499,42 @@ public class Dados extends javax.swing.JFrame {
                     //System.out.println("menor "+menor);
 
                     Dg = Di + 0.1; //diâmetro do gasômetro
-                    r = 0.5*Dg*100; //raio do gasometro 
-                    h2 = (4*V2)/(Math.PI * Dg*Dg);
+                    r = 0.5 * Dg * 100; //raio do gasometro 
+                    h2 = (4 * V2) / (Math.PI * Dg * Dg);
                     h2 *= 1.1; //reforço 10% para o gasometro comportar o volume de biogas
                     h1 = 0.15; //altura ociosa
-                    V1 = (Math.PI * (Dg*Dg)*h1)/4;
+                    V1 = (Math.PI * (Dg * Dg) * h1) / 4;
                     Vg = V1 + V2;
                     p = 0.015;
-                    Pg = (Math.PI*p*(Dg*Dg*100*100))/4;//0.015 pressão máxima para o funcionamento normal dos aparelhos
+                    Pg = (Math.PI * p *(Dg * Dg * 100 * 100)) / 4;//0.015 pressão máxima para o funcionamento normal dos aparelhos
 
 
                     h = H - h2;
                     esp = 0.24; //espessura de um tijolo revestido, referente a parede divisória
-                    Vp = h*Di*esp;
-                    Vr = Vb-Vp;
+                    Vp = h * Di * esp;
+                    Vr = Vb - Vp;
 
                     //Limitar-se-a a indicar estas medidas por julgarmos desnecessários maiores detalhes
                     //Ortolani /\
-                    E = (p*r)/tensao;
-                    a = 0.5;//
+                    E = (p * r) / tensao;
+                    a = 0.5;
                     b = 0.15;//altura da parede do biodigestor acima do nível do substrato
-                    e2 = 0.3;//
-                    Ds = Dg+0.1;
+                    e2 = 0.3;
+                    Ds = Dg + 0.1;
                     n = valores[0];
                     
-                    De = Di+2*esp; //parede de 1 tijolo e 0.24 = espessura
-                    Db = De+0.2;//
-                    /*
-                    System.out.println("Vb = "+Vb);
-                    System.out.println("V = "+V);
-                    //System.out.println("V1 = "+V1);
-                    System.out.println("V2 = "+V2);
-                    //System.out.println("D1 = "+D1);
-                    System.out.println("H = "+H);
-                    System.out.println("Dg = "+Dg);
-                    System.out.println("Ds = "+Ds);
-                    System.out.println("Db = "+Db);
-                    System.out.println("De = "+De);
-                    System.out.println("h = "+h);
-                    System.out.println("h1 = "+h1);
-                    System.out.println("h2 = "+h2);
-                    System.out.println("a = "+a);
-                    System.out.println("B = "+B);
-                    */
-                    v = V/n; //v = V/n... n = dias. Nesse caso 1
-                    Dados dados = this;
+                    De = Di + 2 * esp; //parede de 1 tijolo e 0.24 = espessura
+                    Db = De + 0.2;
+                    
+                    v = V / n; //v = V/n... n = dias. Nesse caso 1
+
                     if(resultados == null)
+                    {
                         resultados = new Resultados();
-                    resultados.janelaDados = dados;
+                        resultados.janelaDados = this;
+                        resultados.setLocationRelativeTo(null);
+                    }
+                    
                     resultados.labels[0].setText(String.format("%.2f", Di)+" m");
                     resultados.labels[1].setText(String.format("%.2f", H)+" m");
                     resultados.labels[2].setText(String.format("%.2f", Vb)+" m³");
@@ -587,25 +557,19 @@ public class Dados extends javax.swing.JFrame {
                     resultados.labels[19].setText(String.format("%.2f", v)+" m³");
                     resultados.labels[20].setText(String.format("%.2f", e2)+" m");
 
-                    resultados.setLocationRelativeTo(null);
                     resultados.setVisible(true);
-                    //dados.setVisible(true);
-
 
                 }
                 else
-                    javax.swing.JOptionPane.showMessageDialog(null,"Por favor, preencha também os horários das tarefas que utilizam biogás.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
-                //for(double valor: x)
-                    //System.out.println(valor);
+                    javax.swing.JOptionPane.showMessageDialog(null, "Por favor, preencha também os horários das tarefas que utilizam biogás.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
 
             }
             else
-                javax.swing.JOptionPane.showMessageDialog(null,"Por favor, preencha os dados acima.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
+                javax.swing.JOptionPane.showMessageDialog(null, "Deve haver consumo de biogás para que as dimensões do biodigestor sejam calculadas.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
         }
         else
-            javax.swing.JOptionPane.showMessageDialog(null,"Use apenas números para preencher os dados e use ponto para separar as casas decimais.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(null, "Use apenas números para preencher os dados e use ponto para separar as casas decimais.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
         
-        //x = Testa();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
@@ -621,15 +585,14 @@ public class Dados extends javax.swing.JFrame {
     int[][] tabelaHorarios = null;
     
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        Dados dados = this;
         if(horarios == null)
+        {
             horarios = new Horarios();
-        horarios.janelaDados = dados;
-        horarios.setLocationRelativeTo(null);
+            horarios.janelaDados = this;
+            horarios.setLocationRelativeTo(null);
+        }
         horarios.setVisible(true);
-        dados.setVisible(false);
-        
-        
+        setVisible(false);     
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -638,14 +601,22 @@ public class Dados extends javax.swing.JFrame {
     
     private void atualiza_tabela(){
         int valor = Integer.parseInt(jSpinner1.getValue().toString());
+        /*  
+            A conversão abaixo não é totalmente segura e foi mantida apenas
+            porque não foi encontrada uma solução mais adequada. Não é possível 
+            garantir que o TableModel retornado pela função "getModel()" é um 
+            DefaultTableModel. Um erro do tipo ClassCastingException pode 
+            ocorrer durante a execução se esse programa for compilado com uma 
+            versão diferente do Java daquela escolhida para essa implementação 
+            (Java 8)
+        */
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-    
-        while(jTable1.getRowCount() != valor){
+
+        while(jTable1.getRowCount() != valor)
             if(jTable1.getRowCount() < valor)
                 modelo.addRow(new Object[] {0,0});
             else
-                modelo.removeRow(jTable1.getRowCount()-1);
-        }
+                modelo.removeRow( jTable1.getRowCount() - 1 );
     }
     
     private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
@@ -656,13 +627,13 @@ public class Dados extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem2ActionPerformed
     
-    public double[] Testa(){
+    /*public double[] Testa(){
         OtimizaBiodigestor teste = new OtimizaBiodigestor();
-        teste.set_xKB(25);
+        teste.set_Vb(25);
         teste.set_mi(0.00001);
         
         return teste.Executa_Otimizacao();
-    }
+    }*/
     
     /**
      * @param args the command line arguments
@@ -693,12 +664,7 @@ public class Dados extends javax.swing.JFrame {
         //</editor-fold>
         
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Dados().setVisible(true);
-            }
-        });
-        
+        java.awt.EventQueue.invokeLater( () -> new Dados().setVisible(true) );
         
     }
 

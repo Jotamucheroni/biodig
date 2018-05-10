@@ -164,9 +164,9 @@ public class Horarios extends javax.swing.JFrame {
     public Dados janelaDados;
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        this.setVisible(false);
-        janelaDados.setVisible(true);
+        setVisible(false);
         atualizaTabela();
+        janelaDados.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -177,7 +177,7 @@ public class Horarios extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-        if(jTable1.getRowCount()-1 > 0)
+        if(jTable1.getRowCount() - 1 > 0)
             modelo.removeRow(jTable1.getRowCount()-1);
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -185,11 +185,12 @@ public class Horarios extends javax.swing.JFrame {
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
         
         while(jTable1.getRowCount() != 7){
-            if(jTable1.getRowCount() - 7 < 0)
+            if(jTable1.getRowCount() < 7)
                 modelo.addRow(new Object[] {"","","","","",""});
             else
-                 modelo.removeRow(jTable1.getRowCount()-1);
+                 modelo.removeRow(jTable1.getRowCount() - 1);
         }
+        
         modelo.setValueAt("22",0,0);
         modelo.setValueAt("5",0,1);
         modelo.setValueAt("0",0,2);//motores

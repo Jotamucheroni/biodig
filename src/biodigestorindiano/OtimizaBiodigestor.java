@@ -10,14 +10,14 @@ public class OtimizaBiodigestor {
         public abstract double f(double[] x);
     }
     
-    private double xKB = 25;
+    private double Vb = 25;
     private double mi = 0.01;
-    private int QTD_VAR = 2;
-    private int QTD_REST_LE = 5;
-    private int QTD_REST_E = 0;
-    private int MAX = QTD_VAR+QTD_REST_LE*2+QTD_REST_E;
-    private int total_variaveis = QTD_VAR+QTD_REST_LE*2+QTD_REST_E;
-    private String endln = System.getProperty("line.separator");
+    private final int QTD_VAR = 2;
+    private final int QTD_REST_LE = 5;
+    private final int QTD_REST_E = 0;
+    private final int MAX = QTD_VAR+QTD_REST_LE*2+QTD_REST_E;
+    private final int total_variaveis = QTD_VAR+QTD_REST_LE*2+QTD_REST_E;
+    private final String endln = System.getProperty("line.separator");
     
     private Funcao funcao_Principal = null;
     private Funcao[] restricoes_LessEqual = null;
@@ -28,8 +28,8 @@ public class OtimizaBiodigestor {
         prints = test;
     }
     
-    public void set_xKB(double valor){
-        xKB = valor;
+    public void set_Vb(double valor){
+        Vb = valor;
     }
     
     public void set_mi(double valor){
@@ -56,76 +56,84 @@ public class OtimizaBiodigestor {
     
     //Função principal a ser minimizada
     class funcao_Biodigestor_Indiano extends Funcao{
+        
+        @Override
         public double f(double[] x){
-            return (Math.PI)*x[0]*x[0]*x[1]/4;
+            return (Math.PI) * x[0] * x[0] * x[1] / 4;
         }
     }
     
     //Restrições do tipo R(x) <= 0
     class restricao1_LE extends Funcao{
+        
+        @Override
         public double f(double[] x){
-            return xKB - ((Math.PI)*x[0]*x[0]*x[1])/4;
+            return Vb - ((Math.PI) * x[0] * x[0] * x[1]) / 4;
         }
     }
     
     class restricao2_LE extends Funcao{
+        
+        @Override
         public double f(double[] x){
-            return x[0]-x[1];
+            return x[0] - x[1];
         }
     }
     
     class restricao3_LE extends Funcao{
+        
+        @Override
         public double f(double[] x){
-            return  0.6*x[1]-x[0];
+            return  0.6 * x[1] - x[0];
         }
     }
     
     class restricao4_LE extends Funcao{
+        
+        @Override
         public double f(double[] x){
-            return  x[1]-6;
+            return  x[1] - 6;
         }
     }
     
     class restricao5_LE extends Funcao{
+        
+        @Override
         public double f(double[] x){
-            return  3-x[1];
+            return  3 - x[1];
         }
     }
     
     public boolean gaussPivoParcialSemTrocas(int n,double[][] m,double[] vt,double[] vs){
         int[] p = new int[MAX];
-        int i,aux,maior,j,k;
-        double d,soma;
-        /*
-        for(i=0;i<n;i++)
-            if(fabs(determinante(n-i,m)) < ZERO)
-                return false;
-        */
-        for(i=0;i<n;i++)
-            p[i]=i;
-        for(k=0;k<n-1;k++){
-            maior=k;
-            for(i=k+1;i<n;i++)
+        int i, aux, maior, j, k;
+        double d, soma;
+
+        for(i = 0; i < n; i++)
+            p[i] = i;
+        for(k = 0;k < n-1; k++){
+            maior = k;
+            for(i = k+1; i < n; i++)
                 if(Math.abs(m[p[i]][k]) > Math.abs(m[p[maior]][k]))
-                    maior=i;
-            aux=p[k];
-            p[k]=p[maior];
-            p[maior]=aux;
-            for(i=k+1;i<n;i++){
-                d=m[p[i]][k]/m[p[k]][k];
-                m[p[i]][k]=0;
-                for(j=k+1;j<n;j++)
-                    m[p[i]][j]=m[p[i]][j]-d*m[p[k]][j];
-                vt[p[i]]=vt[p[i]]-d*vt[p[k]];
+                    maior = i;
+            aux = p[k];
+            p[k] = p[maior];
+            p[maior] = aux;
+            for(i = k+1; i < n; i++){
+                d = m[p[i]][k] / m[p[k]][k];
+                m[p[i]][k] = 0;
+                for(j = k+1; j < n; j++)
+                    m[p[i]][j] = m[p[i]][j] - d * m[p[k]][j];
+                vt[p[i]] = vt[p[i]] - d * vt[p[k]];
             }
         }
 
-        vs[n-1]=vt[p[n-1]]/m[p[n-1]][n-1];
-        for(i=n-2;i>=0;i--){
+        vs[n-1] = vt[p[n-1]] / m[p[n-1]][n-1];
+        for(i = n-2; i >= 0; i--){
             soma=0;
-            for(j=i+1;j<n;j++)
-                soma+=m[p[i]][j]*vs[j];
-            vs[i]=(vt[p[i]]-soma)/m[p[i]][i];
+            for(j = i+1; j < n; j++)
+                soma += m[p[i]][j] * vs[j];
+            vs[i] = (vt[p[i]]-soma) / m[p[i]][i];
         }
 
         return true;
@@ -136,7 +144,7 @@ public class OtimizaBiodigestor {
         
         System.arraycopy(x, 0, y, 0, n);
         //memcpy(y,x,sizeof(double)*n);
-        y[pos]+=c;
+        y[pos] += c;
         return func.f(y);
     }
     
@@ -145,50 +153,47 @@ public class OtimizaBiodigestor {
         
         System.arraycopy(x, 0, y, 0, n);
         //memcpy(y,x,sizeof(double)*n);
-        y[pos1]+=c1;
-        y[pos2]+=c2;
+        y[pos1] += c1;
+        y[pos2] += c2;
         return funcao.f(y);
     }
     
-    public double derivada_Parcial_1_ordem(Funcao funcao,double[] x,int n, int i,double epsilon){
+    public double derivada_Parcial_1_ordem(Funcao funcao,double[] x, int n, int i, double epsilon){
         double erro, erro_ant, h, df_ant, df;
-        int iteracoes_max = 10,k=0;
+        int iteracoes_max = 10;
 
         erro = 99999;
-        h=0.000001;
+        h = 0.000001;
 
-        df = (funcao_Mais_C(funcao,x,n,i,h) - funcao_Mais_C(funcao,x,n,i,-h))/(2*h);
+        df = (funcao_Mais_C(funcao, x, n, i, h) - funcao_Mais_C(funcao, x, n ,i , -h)) / (2 * h);
 
         do{
-            k++;
-            h/=2;
+            h /= 2;
             df_ant = df;
-            df = (funcao_Mais_C(funcao,x,n,i,h) - funcao_Mais_C(funcao,x,n,i,-h))/(2*h);
+            df = ( funcao_Mais_C(funcao, x, n, i, h) - funcao_Mais_C(funcao, x, n, i, -h) ) / (2 * h);
             erro_ant = erro;
-            erro = Math.abs(df-df_ant)/((1>Math.abs(df))?(1):(Math.abs(df)));
+            erro = Math.abs(df - df_ant) / ( (1 > Math.abs(df)) ? (1) : (Math.abs(df)) );
         }while(erro > epsilon && erro_ant > erro && --iteracoes_max != 0);
 
         return df;
     }
     
-    public double derivada_Parcial_2_ordem(Funcao funcao,double[] x,int n, int i, int j, double epsilon){
+    public double derivada_Parcial_2_ordem(Funcao funcao, double[] x, int n, int i, int j, double epsilon){
         double erro, erro_ant, h, df_ant, df;
         int iteracoes_max = 10;
 
 
         erro = 99999;
-        h=0.000001;
-        df = (i==j)?((funcao_Mais_C(funcao,x,n,i,2*h)-2*funcao.f(x)+funcao_Mais_C(funcao,x,n,i,-2*h))/(4*h*h)):
-                    ((funcao_Mais_2_C(funcao,x,n,i,j,h,h)-funcao_Mais_2_C(funcao,x,n,i,j,h,-h)-funcao_Mais_2_C(funcao,x,n,i,j,-h,h)+funcao_Mais_2_C(funcao,x,n,i,j,-h,-h))/(4*h*h));
+        h = 0.000001;
+        df = (i==j) ? ( (funcao_Mais_C(funcao, x, n, i, 2 * h) - 2 * funcao.f(x) + funcao_Mais_C(funcao, x, n, i, -2 * h)) / (4 * h * h) ):
+                      ( (funcao_Mais_2_C(funcao, x, n, i, j, h, h) - funcao_Mais_2_C(funcao, x, n, i, j, h, -h) - funcao_Mais_2_C(funcao, x, n, i, j, -h, h) + funcao_Mais_2_C(funcao, x, n, i, j, -h, -h)) / (4 * h * h) );
         do{
-            h/=2;
-            //cout<<iteracoes_max<<": "<<df<<endl;
-            //system("pause");
+            h /= 2;
             df_ant = df;
-            df = (i==j)?((funcao_Mais_C(funcao,x,n,j,2*h)-2*funcao.f(x)+funcao_Mais_C(funcao,x,n,j,-2*h))/(4*h*h)):
-                        ((funcao_Mais_2_C(funcao,x,n,i,j,h,h)-funcao_Mais_2_C(funcao,x,n,i,j,h,-h)-funcao_Mais_2_C(funcao,x,n,i,j,-h,h)+funcao_Mais_2_C(funcao,x,n,i,j,-h,-h))/(4*h*h));
+            df = (i==j) ? ( (funcao_Mais_C(funcao, x, n, j, 2 * h) - 2 * funcao.f(x) + funcao_Mais_C(funcao, x, n, j, -2 * h)) / (4 * h * h) ):
+                          ( (funcao_Mais_2_C(funcao, x, n, i, j, h, h) - funcao_Mais_2_C(funcao, x, n, i, j, h, -h) - funcao_Mais_2_C(funcao, x, n, i, j, -h, h) + funcao_Mais_2_C(funcao, x, n, i, j, -h, -h)) / (4 * h * h) );
             erro_ant = erro;
-            erro = Math.abs(df-df_ant)/((1>Math.abs(df))?(1):(Math.abs(df)));
+            erro = Math.abs(df-df_ant) / ( (1 > Math.abs(df)) ? (1) : (Math.abs(df)));
         }while(erro > epsilon && erro_ant > erro && --iteracoes_max != 0);
 
         return df;
@@ -250,6 +255,8 @@ public class OtimizaBiodigestor {
     }
     
     class func extends Funcao{
+        
+        @Override
         public double f(double[] x){
             double[] var = new double[QTD_VAR];
             double[] s = new double[QTD_REST_LE];
@@ -322,7 +329,7 @@ public class OtimizaBiodigestor {
         boolean test=false;
         Double valor;
         for(int i = 0; i < x.length && test == false; i++){
-            valor = new Double(x[i]);
+            valor = x[i];
             if(Double.isNaN(valor))
                 test = true;
         }
@@ -347,7 +354,6 @@ public class OtimizaBiodigestor {
         func funcao = new func();
         funcao_Biodigestor_Indiano funcao_Biodigestor = new funcao_Biodigestor_Indiano();
         long k,j;
-        boolean test;
         
         
         double[][] Hessiana = new double[total_variaveis][total_variaveis];
@@ -355,10 +361,10 @@ public class OtimizaBiodigestor {
         double[] d = new double[total_variaveis];
         double[] x = new double[total_variaveis];
         
-        for(k=0; k<10000000; k++){
+        for(k = 0; k < 10000000; k++){
 
             if(prints)
-                System.out.println("k: "+k);
+                System.out.println("k: " + k);
 
             gera_vetor_x(x,var,s,lambda,pi);
             j=0;
@@ -449,9 +455,9 @@ public class OtimizaBiodigestor {
                     break;
             }
             else
-                mi/=beta; //heurística
+                mi /= beta; //heurística
             if(mi < 0.000000001)
-                mi = (mi*2)*10000000;
+                mi = (mi * 2) * 10000000;
         }
         if(prints){    
             System.out.println(endln+"result at k: "+k+endln+"with mi = "+mi+endln+"x* = ");

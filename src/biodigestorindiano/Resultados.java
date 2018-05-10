@@ -6,9 +6,11 @@ package biodigestorindiano;
  */
 public class Resultados extends javax.swing.JFrame {
     
-    public javax.swing.JLabel[] labels = new javax.swing.JLabel[21];
+    public final int numTextField = 21;
+    public javax.swing.JLabel[] labels;
     
     public void inicializa_labels(){
+        labels = new javax.swing.JLabel[numTextField];
         labels[0] = jLabel2;
         labels[1] = jLabel24;
         labels[2] = jLabel25;
@@ -374,7 +376,7 @@ public class Resultados extends javax.swing.JFrame {
     public Dados janelaDados;
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        this.setVisible(false);
+        setVisible(false);
         janelaDados.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
