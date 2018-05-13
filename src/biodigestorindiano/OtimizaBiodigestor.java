@@ -143,8 +143,8 @@ public class OtimizaBiodigestor {
         double[] y = new double[n];
         
         System.arraycopy(x, 0, y, 0, n);
-        //memcpy(y,x,sizeof(double)*n);
         y[pos] += c;
+        
         return func.f(y);
     }
     
@@ -152,9 +152,9 @@ public class OtimizaBiodigestor {
         double[] y = new double[n];
         
         System.arraycopy(x, 0, y, 0, n);
-        //memcpy(y,x,sizeof(double)*n);
         y[pos1] += c1;
         y[pos2] += c2;
+        
         return funcao.f(y);
     }
     
@@ -200,18 +200,18 @@ public class OtimizaBiodigestor {
     }
     
     public void calcula_Gradiente(Funcao funcao,double[] x, int n, double[] grad,double epsilon){
-        for(int i=0; i<n;i++)
-            grad[i] = derivada_Parcial_1_ordem(funcao,x,n,i,epsilon);
+        for(int i = 0; i < n; i++)
+            grad[i] = derivada_Parcial_1_ordem(funcao, x, n, i, epsilon);
     }
     
     public void calcula_Hessiana(Funcao funcao, double[] x, int n, double[][] hessiana, double epsilon){
-        for(int i=0;i<n;i++)
-            for(int j=0;j<n;j++)
-                hessiana[i][j] = derivada_Parcial_2_ordem(funcao,x,n,i,j,epsilon);
+        for(int i = 0; i < n; i++)
+            for(int j = 0; j < n; j++)
+                hessiana[i][j] = derivada_Parcial_2_ordem(funcao, x, n, i, j, epsilon);
     }
     
     public double funcao_Primal_Dual_Barreira_Logaritmica(Funcao funcao, Funcao[] restricoes_LE, int num_RestLE,
-                                                          Funcao[] restricoes_E,int num_RestE, double[] x, int nx, double[] s, int ns,
+                                                          Funcao[] restricoes_E, int num_RestE, double[] x, int nx, double[] s, int ns,
                                                           double[] lambda, int nlambda, double[] pi, int npi, double mi){
         double soma;
         double total;
@@ -221,7 +221,7 @@ public class OtimizaBiodigestor {
 
         //f(x) - mi * soma(ln(S_j))
         soma = 0;
-        for(int j=0; j < ns; j++)
+        for(int j = 0; j < ns; j++)
             soma += Math.log(s[j]);
         total -= mi*soma;
 
@@ -263,16 +263,16 @@ public class OtimizaBiodigestor {
             double[] lambda = new double[QTD_REST_E];
             double[] pi = new double[QTD_REST_LE];
             
-            x_to_vars(x,var,s,lambda,pi);
+            x_to_vars(x, var, s, lambda, pi);
        
-            return funcao_Primal_Dual_Barreira_Logaritmica(funcao_Principal,restricoes_LessEqual,QTD_REST_LE,restricoes_Equal,QTD_REST_E,var,QTD_VAR,s,QTD_REST_LE,lambda,QTD_REST_E,pi,QTD_REST_LE,mi);
+            return funcao_Primal_Dual_Barreira_Logaritmica(funcao_Principal, restricoes_LessEqual, QTD_REST_LE, restricoes_Equal, QTD_REST_E, var, QTD_VAR, s, QTD_REST_LE, lambda, QTD_REST_E, pi, QTD_REST_LE, mi);
         }
     }    
     
     double norma_Vet(double[] x){           //sqrt(soma(x_i))
         double soma = 0;
         for(int i=0; i < x.length; i++)
-            soma += x[i]*x[i];
+            soma += x[i] * x[i];
         return Math.sqrt(soma);
     }
     
@@ -282,20 +282,20 @@ public class OtimizaBiodigestor {
     }
 
     void soma_Vet(double[] v1,double[] v2){ // v1 = v1 + v2;
-        for(int i=0;i< v1.length;i++)
+        for(int i = 0;i < v1.length; i++)
             v1[i] += v2[i];
     }
     
     void print_vet( double[] v){
         for(int i = 0; i < v.length; i++)
-            System.out.printf("%.6f "+endln,v[i]);
+            System.out.printf("%.6f "+ endln, v[i]);
         System.out.println();
     }
     
     void print_mat(double[][] mat,int n, int m){
         for(int i = 0; i < n; i++){
             for(int j = 0; j < m; j++)
-                System.out.printf("%.6f ",mat[i][j]);
+                System.out.printf("%.6f ", mat[i][j]);
             System.out.println();
         }
         System.out.println();
@@ -451,7 +451,7 @@ public class OtimizaBiodigestor {
             //java.util.Random gerador = new java.util.Random();
             //int numero = gerador.nextInt(10)+1;
             if(norma_Vet(grad) < epsilon){
-                if(verifica_KKT(funcao_Biodigestor,restricoes_LessEqual,QTD_REST_LE,restricoes_Equal,QTD_REST_E,var,QTD_VAR,s,QTD_REST_LE,lambda,QTD_REST_E,pi,QTD_REST_LE,mi,epsilon))
+                if( verifica_KKT(funcao_Biodigestor, restricoes_LessEqual, QTD_REST_LE, restricoes_Equal, QTD_REST_E, var, QTD_VAR, s, QTD_REST_LE, lambda, QTD_REST_E, pi, QTD_REST_LE, mi, epsilon) )
                     break;
             }
             else

@@ -6,8 +6,9 @@ package biodigestorindiano;
  */
 public class Dados extends javax.swing.JFrame {
 
-    final int numTextField = 5;
-    javax.swing.JTextField[] entradas;
+    final int numTextField = 6, numEntBatelada = 2;
+    javax.swing.JTextField[] entradas, entBatelada;
+    javax.swing.JLabel[] lbBatelada;
     /**
      * Creates new form Principal
      */
@@ -47,6 +48,14 @@ public class Dados extends javax.swing.JFrame {
         jSpinner1 = new javax.swing.JSpinner();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jLabel4 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jComboBox2 = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jTextField3 = new javax.swing.JTextField();
+        jTextField4 = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -54,7 +63,8 @@ public class Dados extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Otimização de Biodigestores Indianos");
-        setPreferredSize(new java.awt.Dimension(800, 450));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setPreferredSize(new java.awt.Dimension(950, 500));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados"));
         jPanel1.setPreferredSize(new java.awt.Dimension(800, 300));
@@ -73,18 +83,18 @@ public class Dados extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Tipo de resíduo =");
+        jLabel1.setText("Tipo de resíduo:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1. Suíno (K = 3)", "2. Galinhas Poedeiras (K = 1,5)", "3. Gado de corte (K = 4,5)", "4. Gado leiteiro (K = 6)", "5. Exemplo (K = 2,5)" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Suíno (K = 3)", "Galinhas Poedeiras (K = 1,5)", "Gado de corte (K = 4,5)", "Gado leiteiro (K = 6)", "Exemplo (K = 2,5)" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
             }
         });
 
-        jLabel3.setText("Número de pessoas que usarao o biogas =");
+        jLabel3.setText("Número de pessoas que irão cozinhar:");
 
-        jLabel15.setText("Número de lampiões =");
+        jLabel15.setText("Número de lampiões:");
 
         jTextField14.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -92,9 +102,9 @@ public class Dados extends javax.swing.JFrame {
             }
         });
 
-        jLabel16.setText("Tempo [horas] de uso dos lampiões = ");
+        jLabel16.setText("Tempo [horas] de uso dos lampiões:");
 
-        jLabel17.setText("Número de chuveiros =");
+        jLabel17.setText("Número de pessoas que usarão o chuveiro:");
 
         jButton3.setText("Exemplo");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -110,11 +120,10 @@ public class Dados extends javax.swing.JFrame {
             }
         });
 
-        jLabel18.setText("Frequência [dias] de retirada dos residuos =");
-
-        jTextField17.setText("50");
+        jLabel18.setText("Frequência [dias] de retirada dos residuos:");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Motores"));
+        jPanel2.setPreferredSize(new java.awt.Dimension(275, 80));
 
         jLabel2.setText("Quantidade:");
 
@@ -130,7 +139,7 @@ public class Dados extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Potência", "Horas de uso diário"
+                "Potência (HP)", "Horas de uso"
             }
         ) {
             Class[] types = new Class [] {
@@ -150,13 +159,12 @@ public class Dados extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -170,6 +178,23 @@ public class Dados extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jLabel4.setText("Pressão máxima [m.c.a] =  ");
+
+        jTextField1.setName(""); // NOI18N
+
+        jLabel5.setText("Tipo de biodigestor:");
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Indiano", "Chinês", "Batelada" }));
+        jComboBox2.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox2ItemStateChanged(evt);
+            }
+        });
+
+        jLabel6.setText("PUF [dias]:");
+
+        jLabel7.setText("PEP [dias]:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -177,71 +202,104 @@ public class Dados extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jButton3)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton4))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel15)
-                            .addComponent(jLabel16)
-                            .addComponent(jLabel17)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel18))
-                        .addGap(6, 6, 6)
+                            .addComponent(jLabel3)
+                            .addComponent(jButton3)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton1)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton4))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel15)
+                                    .addComponent(jLabel16)
+                                    .addComponent(jLabel17)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel18)
+                                    .addComponent(jLabel4))
+                                .addGap(6, 6, 6)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel6))
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jTextField16, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                            .addComponent(jTextField14, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(jLabel7))
+                                        .addComponent(jTextField1)
+                                        .addComponent(jTextField17)
+                                        .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField16, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField14, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(jTextField14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16)
-                    .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
-                    .addComponent(jTextField16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel18)
-                    .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel15)
+                            .addComponent(jTextField14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7)
+                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel16)
+                            .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel17)
+                            .addComponent(jTextField16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel18)
+                            .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton1)
+                            .addComponent(jButton2)
+                            .addComponent(jButton4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)
+                        .addGap(0, 23, Short.MAX_VALUE))))
         );
 
         jMenu2.setText("Ajuda");
@@ -272,28 +330,39 @@ public class Dados extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 710, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 925, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 272, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
     private void inicializaVetEntradas(){
+        //Entradas padrão
         entradas = new javax.swing.JTextField[numTextField];
         entradas[0] = jTextField17; //Frequência (dias) de retirada dos resíduos
         entradas[1] = jTextField2;  //Número de pessoas que usarão o biogás
         entradas[2] = jTextField14; //Número de lampiões
         entradas[3] = jTextField15; //Tempo (horas) de uso dos lampiões
         entradas[4] = jTextField16; //Número de chuveiros
+        entradas[5] = jTextField1;
         
+        //Labels Batelada
+        lbBatelada = new javax.swing.JLabel[numEntBatelada] ;
+        (lbBatelada[0] = jLabel6).setVisible(false);
+        (lbBatelada[1] = jLabel7).setVisible(false);
+        
+        //Entradas Batelada
+        entBatelada = new javax.swing.JTextField[2];
+        (entBatelada[0] = jTextField3).setVisible(false);
+        (entBatelada[1] = jTextField4).setVisible(false);
     }
     
     private void entradasTeste(){
@@ -307,9 +376,8 @@ public class Dados extends javax.swing.JFrame {
         modelo.setValueAt(1,0,1);
         entradas[2].setText("6");
         entradas[3].setText("4");
-        entradas[4].setText("1");
-        
-        
+        entradas[4].setText("5");
+        entradas[5].setText("0.15");
     }
     
     private void jTextField14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField14ActionPerformed
@@ -321,65 +389,124 @@ public class Dados extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        final int COZIMENTO = 0, MOTOR = 1, ILUMINACAO = 2, BANHO = 3;
-        double[] x;
-        double[] vetK = new double[] {3, 1.5, 4.5, 6, 2.5};
-        double K, B, Vp, Vb, Vr, Vg, V, V1, V2, v, Di, H, Dg, Ds, Db, De, h, h1, h2, a, b, e2, p, esp, E, Pg, r, tensao = 750, n;
-        //tensao = tensão de tração adimíssível do material da parede do gasômetro (kgf/cm²)
+        final short COZIMENTO = 0, MOTOR = 1, ILUMINACAO = 2, BANHO = 3;
+        final short PUF = 0, PEP = 1;
+        double[] vetConsumo = new double[] { 0.42, 0.45, 0.08, 0.74 }; //cozimento, motor, iluminação, banho
+        double[] vetK = new double[] {3, 1.5, 4.5, 6, 2.5}; //suíno, galinhas poedeiras, gado de corte, gado leiteiro, exemplo
+        double K, B, Vp, Vb, Vr, Vg, V, V1, V2, v, Di, H, Dg, Ds, Db, De, h, h1, h2, a, b, e2, p, esp, E, Pg, r, tensao = 750, n; //tensao = tensão de tração adimíssível do material da parede do gasômetro (kgf/cm²)
         double producaoHoraria;
         double cozimentoTotal, motorTotal, iluminacaoTotal, banhoTotal;
         double taxaCozimento, taxaMotor, taxaIluminacao, taxaBanho;
         int qtdCozimento, qtdMotor, qtdIluminacao, qtdBanho;
-        double[] vetConsumo = new double[] { 0.42, 0.45, 0.08, 0.74 }; //cozimento,motor,
-        boolean test = true;
-        //int intervalos;
-        double[] valores = new double[numTextField];
+        double[] valores = new double[numTextField], valBatelada = new double[numEntBatelada]; //valBatelada - PUF e PEP - Batelada
         final javax.swing.table.TableModel modelo =  jTable1.getModel(); //Tabela de motores
         double[][] matriz = new double[Integer.parseInt(jSpinner1.getValue().toString())][2]; //Matriz para os valores da tabela de motores
+        double[] x;
+        boolean test = true;
         
-        //Leitura das caixas de texto
+        //Leitura das caixas de texto padrão
         for(int i = 0; i < numTextField && test; i++){
             try {
                 if(entradas[i].getText().isEmpty())
+                {
                     valores[i] = 0;
+                    entradas[i].setText("0");
+                }
                 else
+                {
                     valores[i] = Double.parseDouble(entradas[i].getText());
+                    
+                    if(valores[i] < 0)
+                    {
+                        test = false;
+                        entradas[i].requestFocus();
+                    }
+                }
             } catch (NumberFormatException e) {
                 test = false;
                 entradas[i].requestFocus();
             }
         }
+        
+        if(valores[0] == 0)
+        {
+            test = false;
+            entradas[0].requestFocus();
+        }
+        
+        //Leitura das caixas de texto exclusivas do modelo Batelada
+        if(jComboBox2.getSelectedIndex() == 2 && test)
+        {
+            for(int i = 0; i < numEntBatelada && test; i++){
+                try {
+                    if(entBatelada[i].getText().isEmpty())
+                    {
+                        valBatelada[i] = 0;
+                        test = false;
+                        entBatelada[i].setText("0");
+                        entBatelada[i].requestFocus();
+                    }
+                    else
+                    {
+                        valBatelada[i] = Double.parseDouble(entBatelada[i].getText());
+                        
+                        if(valBatelada[i] <= 0)
+                        {
+                            test = false;
+                            entBatelada[i].requestFocus();
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    test = false;
+                    entBatelada[i].requestFocus();
+                }
+            }
+        }
 
         //Leitura da tabela de motores
-        for(int i = 0; i < Integer.parseInt(jSpinner1.getValue().toString()) && test; i++){
+        int numLinhas = Integer.parseInt(jSpinner1.getValue().toString());
+        
+        for(int i = 0; i < numLinhas && test; i++){
             try {
-                if(modelo.getValueAt(i, 0).toString().isEmpty())
+                if(modelo.getValueAt(i, 0) == null)
+                {
                     matriz[i][0] = 0;
+                    modelo.setValueAt(0, i, 0);
+                }
                 else
                     matriz[i][0] = Double.parseDouble(modelo.getValueAt(i, 0).toString());
 
-                if(modelo.getValueAt(i, 1).toString().isEmpty())
+                if(modelo.getValueAt(i, 1) == null)
+                {
                     matriz[i][1] = 0;
+                    modelo.setValueAt(0, i, 1);
+                }
                 else
                     matriz[i][1] = Double.parseDouble(modelo.getValueAt(i, 1).toString());
+                
+                if(matriz[i][0] < 0 || matriz[i][1] < 0)
+                {
+                    test = false;
+                    jTable1.setRowSelectionInterval(i, i);
+                }
             } catch (NumberFormatException e) {
                 test = false;
             }
         }
         
+        //Se as entradas estão corretas, calcular o consumo diário de biogás
         if(test){
             cozimentoTotal = vetConsumo[COZIMENTO] * valores[1];
+            iluminacaoTotal = vetConsumo[ILUMINACAO] * valores[2] * valores[3];
+            banhoTotal = vetConsumo[BANHO] * valores[4];
             motorTotal = 0;
             
             for(int i = 0; i < Integer.parseInt(jSpinner1.getValue().toString()); i++)
-                motorTotal += vetConsumo[MOTOR] * matriz[i][0] * matriz[i][1];
-                
-            iluminacaoTotal = banhoTotal = 0;
-            iluminacaoTotal += vetConsumo[ILUMINACAO] * valores[2] * valores[3];
-            banhoTotal += vetConsumo[BANHO] * valores[1];
+                motorTotal += vetConsumo[MOTOR] * matriz[i][0] * matriz[i][1];               
             
             B = cozimentoTotal + motorTotal + iluminacaoTotal + banhoTotal;
             
+            //Se houver consumo, calcular as dimensões
             if(B != 0){           
                 K = vetK[jComboBox1.getSelectedIndex()];
                 V = K * B;
@@ -393,39 +520,23 @@ public class Dados extends javax.swing.JFrame {
                 x = otimo.Executa_Otimizacao();
                 //long fim = System.currentTimeMillis();
                 //System.out.println(fim - inicio);
-
-
                 Di = x[0];
                 H = x[1];
 
                 producaoHoraria = B / 24;
 
-                if(horarios == null)
-                    test = false;
-                else{
-                    if(tabelaHorarios == null)
-                        tabelaHorarios = horarios.getTabela();
+                //Se a tabela de horários foi preenchida
+                if(tabelaHorarios != null){
+                    qtdCozimento = 0;
+                    qtdMotor = 0;
+                    qtdIluminacao = 0;
+                    qtdBanho = 0;
 
-                    //intervalos = 0;
-                    for(int i = 0; i < tabelaHorarios.length && test; i++){
-                        if(tabelaHorarios[i][0] == tabelaHorarios[i][1] && tabelaHorarios.length > 1)
-                            test = false;
-                        //else
-                            //intervalos++;
-                    }
-                }
-
-                if(test){
-                    qtdCozimento=0;
-                    qtdMotor=0;
-                    qtdIluminacao=0;
-                    qtdBanho=0;
-
-                    for(int i = 0; i < tabelaHorarios.length && test; i++){
-                        qtdCozimento += tabelaHorarios[i][5];
-                        qtdMotor += tabelaHorarios[i][2];
-                        qtdBanho += tabelaHorarios[i][3];
-                        qtdIluminacao += tabelaHorarios[i][4];
+                    for (int[] tabelaHorario : tabelaHorarios) {
+                        qtdCozimento += tabelaHorario[5];
+                        qtdMotor += tabelaHorario[2];
+                        qtdBanho += tabelaHorario[3];
+                        qtdIluminacao += tabelaHorario[4];
                     }
 
                     if(qtdCozimento != 0)
@@ -445,76 +556,66 @@ public class Dados extends javax.swing.JFrame {
                     else
                         taxaBanho = 0;
 
+                    final short INTERVALO = 0, ACUMULADO = 1, PRODUCAO = 2, CONSUMO = 3, TOTAL = 4;
                     double[][] quadroProducao = new double[tabelaHorarios.length][5];
+                    /*
+                        A: Volume que deve estar armazenado no início de cada período
+                        Z: Volume que deverá ser armazendado no fim do período
+                    */
+                    double maiorA = 0, maiorZ = 0; 
+                    
                     for(int i = 0; i < tabelaHorarios.length; i++){
                         if(tabelaHorarios[i][0] > tabelaHorarios[i][1])
-                            quadroProducao[i][0] = tabelaHorarios[i][1]+(24 - tabelaHorarios[i][0]);
+                            quadroProducao[i][INTERVALO] = tabelaHorarios[i][1] + (24 - tabelaHorarios[i][0]);
                         else
-                            quadroProducao[i][0] = tabelaHorarios[i][1]-tabelaHorarios[i][0];
+                            quadroProducao[i][INTERVALO] = tabelaHorarios[i][1] - tabelaHorarios[i][0];
 
-                        quadroProducao[i][2] = producaoHoraria*quadroProducao[i][0];
-                        quadroProducao[i][3] = taxaCozimento*tabelaHorarios[i][5] +
-                                               taxaMotor*tabelaHorarios[i][2] +
-                                               taxaIluminacao*tabelaHorarios[i][4] +
-                                               taxaBanho*tabelaHorarios[i][3];
+                        quadroProducao[i][PRODUCAO] = producaoHoraria * quadroProducao[i][0];
+                        quadroProducao[i][CONSUMO]  = taxaCozimento * tabelaHorarios[i][5] +
+                                                      taxaMotor * tabelaHorarios[i][2] +
+                                                      taxaIluminacao * tabelaHorarios[i][4] +
+                                                      taxaBanho * tabelaHorarios[i][3];
 
-
-                        if(i == 0)
-                            quadroProducao[i][1] = 0;
-                        else
-                            if(quadroProducao[i-1][4] < 0)
-                                quadroProducao[i][1] = 0;
-                            else
-                                quadroProducao[i][1] = quadroProducao[i-1][4];
-
-                        quadroProducao[i][4] = quadroProducao[i][1]+quadroProducao[i][2]-quadroProducao[i][3];
-                    }
-                    /*
-                    for(int i = 0; i < quadroProducao.length; i++){
-                        for(int j = 0; j < 5; j ++)
-                            System.out.print(quadroProducao[i][j]+" ");
-                        System.out.println("");
-                    }
-                    int qtdPeriodos;
-                    if(quadroProducao.length < 3)
-                        qtdPeriodos = quadroProducao.length;
-                    else
-                        qtdPeriodos = 3;
-                    */
-
-                    double maior = quadroProducao[0][1], menor = quadroProducao[0][4];
-                    
-                    for(int i = 1; i < quadroProducao.length; i++){
-                        if(quadroProducao[i][1] > maior)
-                            maior = quadroProducao[i][1];
-                        if(quadroProducao[i][4] < menor)
-                            menor = quadroProducao[i][4];
+                        if(quadroProducao[i][CONSUMO] - quadroProducao[i][PRODUCAO] > maiorA)
+                            maiorA = quadroProducao[i][CONSUMO] - quadroProducao[i][PRODUCAO];
+                        
+                        if(quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO] > maiorZ)
+                            maiorZ = quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO];                        
                     }
                     
-                    V2 = maior;
-                    if(menor < 0)
-                        V2 -= menor;
-
-                    //System.out.println("maior "+maior);
-                    //System.out.println("menor "+menor);
+                    double maiorVolume = (maiorA >= maiorZ) ? maiorA : maiorZ, menorTotal = B + 1;
+                    
+                    quadroProducao[0][ACUMULADO] = 0;
+                    quadroProducao[0][TOTAL] = quadroProducao[0][PRODUCAO] - quadroProducao[0][CONSUMO];
+                    
+                    for(int i = 1; i < tabelaHorarios.length; i++){
+                        quadroProducao[i][ACUMULADO] = (quadroProducao[i - 1][TOTAL] < maiorVolume) ? quadroProducao[i - 1][TOTAL] : maiorVolume;
+                        quadroProducao[i][TOTAL] = quadroProducao[i][ACUMULADO] + quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO];
+                        if( quadroProducao[i][TOTAL] < menorTotal)
+                            menorTotal = quadroProducao[i][TOTAL];
+                    }
+                    
+                    V2 = maiorVolume;
+                    if(menorTotal < 0)
+                        V2 -= menorTotal;
 
                     Dg = Di + 0.1; //diâmetro do gasômetro
                     r = 0.5 * Dg * 100; //raio do gasometro 
                     h2 = (4 * V2) / (Math.PI * Dg * Dg);
                     h2 *= 1.1; //reforço 10% para o gasometro comportar o volume de biogas
-                    h1 = 0.15; //altura ociosa
+                    h1 = valores[5]; //altura ociosa
                     V1 = (Math.PI * (Dg * Dg) * h1) / 4;
                     Vg = V1 + V2;
-                    p = 0.015;
+                    p = valores[5] / 10;
                     Pg = (Math.PI * p *(Dg * Dg * 100 * 100)) / 4;//0.015 pressão máxima para o funcionamento normal dos aparelhos
 
 
                     h = H - h2;
-                    esp = 0.24; //espessura de um tijolo revestido, referente a parede divisória
+                    esp = 0.24; //espessura de um tijolo revestido, referente à parede divisória
                     Vp = h * Di * esp;
                     Vr = Vb - Vp;
 
-                    //Limitar-se-a a indicar estas medidas por julgarmos desnecessários maiores detalhes
+                    //Limitar-se-á a indicar estas medidas por julgarmos desnecessários maiores detalhes
                     //Ortolani /\
                     E = (p * r) / tensao;
                     a = 0.5;
@@ -568,7 +669,7 @@ public class Dados extends javax.swing.JFrame {
                 javax.swing.JOptionPane.showMessageDialog(null, "Deve haver consumo de biogás para que as dimensões do biodigestor sejam calculadas.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
         }
         else
-            javax.swing.JOptionPane.showMessageDialog(null, "Use apenas números para preencher os dados e use ponto para separar as casas decimais.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(null, "Use apenas números não negativos para preencher os dados e use ponto para separar as casas decimais. \nA frequência de retirada dos resíduos e os dados de PUF e PEP (Batelada) também não podem ser iguais a zero.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -591,8 +692,8 @@ public class Dados extends javax.swing.JFrame {
             horarios.janelaDados = this;
             horarios.setLocationRelativeTo(null);
         }
-        horarios.setVisible(true);
-        setVisible(false);     
+        setVisible(false); 
+        horarios.setVisible(true);    
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -626,14 +727,16 @@ public class Dados extends javax.swing.JFrame {
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem2ActionPerformed
-    
-    /*public double[] Testa(){
-        OtimizaBiodigestor teste = new OtimizaBiodigestor();
-        teste.set_Vb(25);
-        teste.set_mi(0.00001);
+
+    private void jComboBox2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox2ItemStateChanged
+        boolean visivel = jComboBox2.getSelectedIndex() == 2;
         
-        return teste.Executa_Otimizacao();
-    }*/
+        for(int i = 0; i < numEntBatelada; i++)
+        {
+            lbBatelada[i].setVisible(visivel);
+            entBatelada[i].setVisible(visivel);
+        }
+    }//GEN-LAST:event_jComboBox2ItemStateChanged
     
     /**
      * @param args the command line arguments
@@ -674,6 +777,7 @@ public class Dados extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -681,6 +785,10 @@ public class Dados extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
@@ -690,10 +798,13 @@ public class Dados extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField14;
     private javax.swing.JTextField jTextField15;
     private javax.swing.JTextField jTextField16;
     private javax.swing.JTextField jTextField17;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
 }

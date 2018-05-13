@@ -137,48 +137,79 @@ public class Horarios extends javax.swing.JFrame {
     
     private int[][] tabela = null;
     
-    void atualizaTabela(){
-        String aux;
-        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+    boolean atualizaTabela(){
+        javax.swing.table.TableModel modelo = jTable1.getModel();
+        int numLinha = modelo.getRowCount(), numColuna = modelo.getColumnCount();
         boolean test = true;
+        tabela = new int[numLinha][numColuna];
+        int qtdCozimento, qtdMotor, qtdIluminacao, qtdBanho;
         
-        tabela = new int[jTable1.getRowCount()][jTable1.getColumnCount()];
-        
-        for(int i = 0; i < jTable1.getRowCount() && test; i++)
-            for(int j = 0; j < jTable1.getColumnCount() && test; j++){
-                aux = "0";
-                if(modelo.getValueAt(i, j) != null)
-                    aux = modelo.getValueAt(i, j).toString();
-                if(aux.isEmpty())
-                    tabela[i][j] = 0;
-                else
-                    tabela[i][j] = Integer.parseInt(aux);
-                
+        //Coloca os valores digitais na matriz "tabela"
+        for(int i = 0; i < numLinha && test; i++)
+            for(int j = 0; j < numColuna && test; j++){
+                try
+                {
+                    if( modelo.getValueAt(i, j) == null )
+                    {
+                        tabela[i][j] = 0;
+                        modelo.setValueAt(0, i, j);
+                    }
+                    else
+                    {
+                        tabela[i][j] = Integer.parseInt(modelo.getValueAt(i, j).toString());
+                        if(tabela[i][j] < 0)
+                        {
+                            test = false;
+                            jTable1.setRowSelectionInterval(i, i);
+                        }
+                    }
+                }
+                catch (NumberFormatException e) {
+                    test = false;
+                }
             }
-    }
-    
-    public int[][] getTabela(){
-        return tabela;
+        
+        //Verifica a coerência dos horários
+        if( tabela[tabela.length - 1][1] != tabela[0][0])
+        {
+            test = false;
+            jTable1.setRowSelectionInterval(0, 0);
+            jTable1.addRowSelectionInterval(tabela.length - 1, tabela.length - 1);
+        }
+                    
+        for(int i = 1; i < tabela.length && test; i++)
+            if(tabela[i][0] != tabela[i - 1][1])
+            {
+                test = false;
+                jTable1.setRowSelectionInterval(i - 1, i);
+            }
+        
+        return test;
     }
     
     public Dados janelaDados;
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        setVisible(false);
-        atualizaTabela();
-        janelaDados.setVisible(true);
+        if( atualizaTabela() )
+        {
+            setVisible(false);
+            janelaDados.tabelaHorarios = tabela;
+            janelaDados.setVisible(true);
+        }
+        else
+            javax.swing.JOptionPane.showMessageDialog(null, "Use apenas números inteiros não negativos para preencher os dados.\nO horário final de cada período deve coincidir com o horário de início do período seguinte.\nObs.: O período seguinte ao último período, ciclicamente, é o primeiro período","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-        modelo.addRow(new Object[] {"","","","","",""});
+        modelo.addRow(new Object[] {null, null, null, null, null, null});
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-        if(jTable1.getRowCount() - 1 > 0)
-            modelo.removeRow(jTable1.getRowCount()-1);
+        if(jTable1.getRowCount() > 1)
+            modelo.removeRow(jTable1.getRowCount() - 1);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -186,7 +217,7 @@ public class Horarios extends javax.swing.JFrame {
         
         while(jTable1.getRowCount() != 7){
             if(jTable1.getRowCount() < 7)
-                modelo.addRow(new Object[] {"","","","","",""});
+                modelo.addRow(new Object[] {null, null, null, null, null, null});
             else
                  modelo.removeRow(jTable1.getRowCount() - 1);
         }
