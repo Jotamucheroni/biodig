@@ -513,11 +513,10 @@ public class Dados extends javax.swing.JFrame {
                 Vb = V * 1.1;
 
                 OtimizaBiodigestor otimo = new OtimizaBiodigestor();
-                otimo.set_Vb(Vb);
-                otimo.set_mi(0.0001);
-                otimo.set_Prints(false);
+                otimo.setVb(Vb);
+                otimo.setMi(0.0001);
                 //long inicio = System.currentTimeMillis();
-                x = otimo.Executa_Otimizacao();
+                x = otimo.executaOtimizacao();
                 //long fim = System.currentTimeMillis();
                 //System.out.println(fim - inicio);
                 Di = x[0];
