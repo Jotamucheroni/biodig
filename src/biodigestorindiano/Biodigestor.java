@@ -42,7 +42,23 @@ public abstract class Biodigestor {
     Funcao[] restMI, restI;
     protected double Vb, freq, pressaoMax, Vug;
     
-    double[] var;
+    double[] varIni, sIni, lambdaIni, piIni;
+    
+    public double[] getVarIni(){
+        return varIni;
+    }
+    
+    public double[] getSIni(){
+        return sIni;
+    }
+    
+    public double[] getLambdaIni(){
+        return lambdaIni;
+    }
+    
+    public double[] getPiIni(){
+        return piIni;
+    }
     
     Parametro[] params;
     String nomeImagem;

@@ -11,7 +11,7 @@ public class OtimizaBiodigestor {
     
     public static void setBiodigesotor(Biodigestor modelo){
         biodig = modelo;
-        qtdVar = biodig.var.length;
+        qtdVar = biodig.varIni.length;
         qtdRestMI = biodig.restMI.length;
         qtdRestI = biodig.restI.length;
         totalVariaveis = qtdVar + qtdRestMI * 2 + qtdRestI;
@@ -248,10 +248,13 @@ public class OtimizaBiodigestor {
     }   
         
     public static void executaOtimizacao(){
-        double[] var = new double[] {4,5};//qtdVar
-        double[] s = new double[] {0.5,0.5,0.5,0.5,0.5};//QTD_REST_LE
-        double[] lambda = new double[qtdRestI];
-        double[] pi = new double[] {0.5,0.5,0.5,0.5,0.5};//QTD_REST_LE
+        if(biodig == null)
+            return;
+        
+        double[] var = biodig.getVarIni(); //new double[] {4,5};//qtdVar
+        double[] s = biodig.getSIni(); //new double[] {0.5,0.5,0.5,0.5,0.5};//QTD_REST_LE
+        double[] lambda = biodig.getLambdaIni(); //new double[qtdRestI];
+        double[] pi = biodig.getPiIni(); //new double[] {0.5,0.5,0.5,0.5,0.5};//QTD_REST_LE
         double beta = 10;
         double alphap, alphad;
         double menor;

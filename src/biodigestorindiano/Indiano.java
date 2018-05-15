@@ -6,7 +6,7 @@ package biodigestorindiano;
  */
 public class Indiano extends Biodigestor {
     
-    final int QTD_VAR = 2, QTD_REST_MI = 5, QTD_REST_I = 0, QTD_PARAM = 21;
+    final int QTD_REST_MI = 5, QTD_REST_I = 0, QTD_PARAM = 21;
     final double VB_PADRAO = 27.5, FREQ_PADRAO = 50, PRESS_PADRAO = 0.15, VUG_PADRAO = 4.06;
     
     //Função principal a ser minimizada
@@ -79,7 +79,10 @@ public class Indiano extends Biodigestor {
     
     @Override
     final void inicializaFuncoes(){
-        var = new double[QTD_VAR]; 
+        varIni = new double[] {4, 5};
+        sIni = new double[] {0.5, 0.5, 0.5, 0.5, 0.5};
+        lambdaIni  = new double[] {};
+        piIni = new double[] {0.5,0.5,0.5,0.5,0.5};
         
         objetivo = new FuncaoObjetivo();
         
@@ -109,14 +112,12 @@ public class Indiano extends Biodigestor {
     }
     
     @Override
-    void determinaSolucao(double[] solucao){
-        var = solucao;
-        
+    void determinaSolucao(double[] solucao){        
         double Vp, Vr, Vg, VB, V1, v, Di, H, Dg, Ds, Db, De, h, h1, h2,
                a, b, e2, p, esp, E, Pg, r, tensao = 750, n; //tensao = tensão de tração adimíssível do material da parede do gasômetro (kgf/cm²)
         
-        Di = var[0];
-        H = var[1];
+        Di = solucao[0];
+        H = solucao[1];
         VB = (Math.PI) * Di * Di * H / 4;
         
         Dg = Di + 0.1; //diâmetro do gasômetro
