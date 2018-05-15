@@ -8,13 +8,14 @@ public class Indiano extends Biodigestor {
     
     final int QTD_REST_MI = 5, QTD_REST_I = 0, QTD_PARAM = 21;
     final double VB_PADRAO = 27.5, FREQ_PADRAO = 50, PRESS_PADRAO = 0.15, VUG_PADRAO = 4.06;
+    final double P = (Math.PI) / 4;
     
     //Função principal a ser minimizada
     class FuncaoObjetivo implements Funcao{
         
         @Override
         public double f(double[] x){
-            return (Math.PI) * x[0] * x[0] * x[1] / 4;
+            return P * x[0] * x[0] * x[1];
         }
     }
     
@@ -23,7 +24,7 @@ public class Indiano extends Biodigestor {
         
         @Override
         public double f(double[] x){
-            return Vb - ((Math.PI) * x[0] * x[0] * x[1]) / 4;
+            return Vb - (P * x[0] * x[0] * x[1]);
         }
     }
     
@@ -71,7 +72,7 @@ public class Indiano extends Biodigestor {
     public Indiano(double Vb, double freq, double pressaoMax, double Vug){
         inicializaFuncoes();
         inicializaParametros();
-        setVb(Vb);
+        setVb(Vb * 1.1);
         setFreq(freq);
         setPressaoMax(pressaoMax);
         setVug(Vug);

@@ -391,6 +391,7 @@ public class Dados extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         double[] valores = new double[numTextField], valBatelada = new double[numEntBatelada]; //valBatelada - PUF e PEP - Batelada
         boolean test = true;
+        int opcao = jComboBox2.getSelectedIndex();
         
         //Leitura das caixas de texto padrão
         for(int i = 0; i < numTextField && test; i++){
@@ -423,7 +424,7 @@ public class Dados extends javax.swing.JFrame {
         }
         
         //Leitura das caixas de texto exclusivas do modelo Batelada
-        if(jComboBox2.getSelectedIndex() == 2 && test)
+        if(opcao == 2 && test)
         {
             for(int i = 0; i < numEntBatelada && test; i++){
                 try {
@@ -502,12 +503,11 @@ public class Dados extends javax.swing.JFrame {
             
             //Se houver consumo, calcular as dimensões
             if(B != 0){
-                double K, V, Vb, producaoHoraria;
+                double K, Vb, producaoHoraria;
                 double[] vetK = new double[] {3, 1.5, 4.5, 6, 2.5}; //suíno, galinhas poedeiras, gado de corte, gado leiteiro, exemplo
                 
                 K = vetK[jComboBox1.getSelectedIndex()];
-                V = K * B;
-                Vb = V * 1.1;                
+                Vb = K * B;            
                 producaoHoraria = B / 24;
 
                 //Se a tabela de horários foi preenchida, calcula volume útil do gasômetro
@@ -588,7 +588,20 @@ public class Dados extends javax.swing.JFrame {
                         V2 -= menorTotal;
                     
                     //Calcula Di e H
-                    Biodigestor biodig = new Indiano(Vb, valores[0], valores[5], V2);                
+                    Biodigestor biodig;
+                    
+                    switch( opcao )
+                    {
+                        case 0:
+                            biodig = new Indiano(Vb, valores[0], valores[5], V2);
+                            break;
+                        case 1:
+                            biodig = new Chines(Vb, valores[0], valores[5], V2);
+                            break;
+                        default:
+                            biodig = new Indiano(Vb, valores[0], valores[5], V2);
+                    }
+                    
                     OtimizaBiodigestor.setBiodigesotor(biodig);
                     OtimizaBiodigestor.setMi(0.0001); 
                     OtimizaBiodigestor.executaOtimizacao();                    
@@ -601,14 +614,20 @@ public class Dados extends javax.swing.JFrame {
                         resultados.setLocationRelativeTo(null);
                     }
                     
-                    int numParam = biodig.params.length;
+                    int numParam = biodig.params.length, i;
                     
-                    for(int i = 0; i < numParam; i++)
+                    for(i = 0; i < numParam; i++)
                     {
                         resultados.labelsRotulo[i].setText(biodig.params[i].getRotulo());
                         resultados.labelsResult[i].setText(biodig.params[i].getValorFormatado());
                     }
-
+                    
+                    for( ; i < resultados.labelsRotulo.length ; i++)
+                    {
+                        resultados.labelsRotulo[i].setText("");
+                        resultados.labelsResult[i].setText("");
+                    }
+                    
                     resultados.setVisible(true);
 
                 }

@@ -6,7 +6,7 @@ package biodigestorindiano;
 public class OtimizaBiodigestor {
     
     private static Biodigestor biodig = null;
-    private static double  mi = 0.01;
+    private static double  mi = 0.0001;
     private static int qtdVar, qtdRestMI, qtdRestI, totalVariaveis;
     
     public static void setBiodigesotor(Biodigestor modelo){
