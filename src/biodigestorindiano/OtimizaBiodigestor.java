@@ -5,86 +5,23 @@ package biodigestorindiano;
  */
 public class OtimizaBiodigestor {
     
-    private double Vb = 25, mi = 0.01;
-    private final int QTD_VAR = 2, QTD_REST_MI = 5, QTD_REST_I = 0,
-                      total_variaveis = QTD_VAR + QTD_REST_MI * 2 + QTD_REST_I;
+    private static Biodigestor biodig = null;
+    private static double  mi = 0.01;
+    private static int qtdVar, qtdRestMI, qtdRestI, totalVariaveis;
     
-    private Funcao funcaoPrincipal = null;
-    private Funcao[] restricoesMenorIgual = null, restricoesIgual = null;
-    
-    public OtimizaBiodigestor(){
-        funcaoPrincipal = new FuncaoBiodigestorIndiano();
-        
-        restricoesMenorIgual = new Funcao[QTD_REST_MI];
-        
-        restricoesMenorIgual[0] = new restricao1_LE();
-        restricoesMenorIgual[1] = new restricao2_LE();
-        restricoesMenorIgual[2] = new restricao3_LE();
-        restricoesMenorIgual[3] = new restricao4_LE();
-        restricoesMenorIgual[4] = new restricao5_LE();
-        
-        restricoesIgual = new Funcao[QTD_REST_I];
-    } 
-    
-    public void setVb(double valor){
-        Vb = valor;
+    public static void setBiodigesotor(Biodigestor modelo){
+        biodig = modelo;
+        qtdVar = biodig.var.length;
+        qtdRestMI = biodig.restMI.length;
+        qtdRestI = biodig.restI.length;
+        totalVariaveis = qtdVar + qtdRestMI * 2 + qtdRestI;
     }
     
-    public void setMi(double valor){
+    public static void setMi(double valor){
         mi = valor;
     }
     
-    //Função principal a ser minimizada
-    class FuncaoBiodigestorIndiano implements Funcao{
-        
-        @Override
-        public double f(double[] x){
-            return (Math.PI) * x[0] * x[0] * x[1] / 4;
-        }
-    }
-    
-    //Restrições do tipo R(x) <= 0
-    class restricao1_LE implements Funcao{
-        
-        @Override
-        public double f(double[] x){
-            return Vb - ((Math.PI) * x[0] * x[0] * x[1]) / 4;
-        }
-    }
-    
-    class restricao2_LE implements Funcao{
-        
-        @Override
-        public double f(double[] x){
-            return x[0] - x[1];
-        }
-    }
-    
-    class restricao3_LE implements Funcao{
-        
-        @Override
-        public double f(double[] x){
-            return  0.6 * x[1] - x[0];
-        }
-    }
-    
-    class restricao4_LE implements Funcao{
-        
-        @Override
-        public double f(double[] x){
-            return  x[1] - 6;
-        }
-    }
-    
-    class restricao5_LE implements Funcao{
-        
-        @Override
-        public double f(double[] x){
-            return  3 - x[1];
-        }
-    }
-    
-    public void gaussPivoParcialSemTrocas(double[][] m, double[] b, double[] x){
+    public static void gaussPivoParcialSemTrocas(double[][] m, double[] b, double[] x){
         int[] p = new int[x.length];
         int i, j, k, aux, maior, n = x.length;
         double d, soma;
@@ -122,7 +59,7 @@ public class OtimizaBiodigestor {
         }
     }
     
-    public double funcaoMaisC(Funcao func, double[] x, int pos, double c){
+    public static double funcaoMaisC(Funcao func, double[] x, int pos, double c){
         double[] y = new double[x.length];
         
         System.arraycopy(x, 0, y, 0, x.length);
@@ -131,7 +68,7 @@ public class OtimizaBiodigestor {
         return func.f(y);
     }
     
-    public double funcaoMaisC(Funcao funcao, double[] x, int pos1, int pos2, double c1, double c2){
+    public static double funcaoMaisC(Funcao funcao, double[] x, int pos1, int pos2, double c1, double c2){
         double[] y = new double[x.length];
         
         System.arraycopy(x, 0, y, 0, x.length);
@@ -141,9 +78,9 @@ public class OtimizaBiodigestor {
         return funcao.f(y);
     }
     
-    public double derivadaPrimeira(Funcao funcao, double[] x, int i, double epsilon){
+    public static double derivadaPrimeira(Funcao funcao, double[] x, int i, double epsilon){
         double erro, erro_ant, h, df_ant, df;
-        int iteracoes_max = 10;
+        int maxIteracoes = 10;
 
         erro = 99999;
         h = 0.000001;
@@ -156,12 +93,12 @@ public class OtimizaBiodigestor {
             df = ( funcaoMaisC(funcao, x, i, h) - funcaoMaisC(funcao, x, i, -h) ) / (2 * h);
             erro_ant = erro;
             erro = Math.abs(df - df_ant) / ( (1 > Math.abs(df)) ? (1) : (Math.abs(df)) );
-        }while(erro > epsilon && erro_ant > erro && --iteracoes_max != 0);
+        }while(erro > epsilon && erro_ant > erro && --maxIteracoes != 0);
 
         return df;
     }
     
-    public double derivadaSegunda(Funcao funcao, double[] x, int i, int j, double epsilon){
+    public static double derivadaSegunda(Funcao funcao, double[] x, int i, int j, double epsilon){
         double erro, erro_ant, h, df_ant, df;
         int iteracoes_max = 10;
 
@@ -182,14 +119,14 @@ public class OtimizaBiodigestor {
         return df;
     }
     
-    public void gradiente(Funcao funcao, double[] x, double[] grad, double epsilon){
+    public static void gradiente(Funcao funcao, double[] x, double[] grad, double epsilon){
         int n = x.length, i;
         
         for(i = 0; i < n; i++)
             grad[i] = derivadaPrimeira(funcao, x, i, epsilon);
     }
     
-    public void hessiana(Funcao funcao, double[] x, double[][] hessiana, double epsilon){
+    public static void hessiana(Funcao funcao, double[] x, double[][] hessiana, double epsilon){
         int n = x.length, i, j;
         
         for(i = 0; i < n; i++)
@@ -201,7 +138,7 @@ public class OtimizaBiodigestor {
                 
     }
     
-    public double funcaoPDBL(Funcao funcao, Funcao[] restricoes_LE, Funcao[] restricoes_E,
+    public static double funcaoPDBL(Funcao funcao, Funcao[] restricoesMI, Funcao[] restricoesI,
                              double[] x, double[] s, double[] lambda, double[] pi){
         double soma;
         double total;
@@ -219,65 +156,65 @@ public class OtimizaBiodigestor {
         //f(x) - mi * soma(ln(S_j)) + soma(lambda_i * restricao_igualdade_i)
         soma = 0;
         for(int i=0; i < nlambda; i++)
-            soma += lambda[i]*(restricoes_E[i]).f(x);
+            soma += lambda[i]*(restricoesI[i]).f(x);
         total += soma;
 
         //f(x) - mi * soma(ln(S_j)) + soma(lambda_i * restricao_igualdade_i) + soma(pi_j * restricao_menor_igual_j + S_j)
         soma = 0;
         for(int j=0; j < npi; j++)
-            soma += pi[j]*((restricoes_LE[j]).f(x)+s[j]);
+            soma += pi[j]*((restricoesMI[j]).f(x)+s[j]);
         total += soma;
 
         return total;
     }
     
-    public void xToVars(double[] x, double[] var, double[] s, double[] lambda, double[] pi){
-        System.arraycopy(x, 0, var, 0, QTD_VAR);
-        System.arraycopy(x, QTD_VAR, s, 0, QTD_REST_MI);
-        System.arraycopy(x, QTD_VAR + QTD_REST_MI, lambda, 0, QTD_REST_I);
-        System.arraycopy(x, QTD_VAR + QTD_REST_MI + QTD_REST_I, pi, 0, QTD_REST_MI);
+    public static void xToVars(double[] x, double[] var, double[] s, double[] lambda, double[] pi){
+        System.arraycopy(x, 0, var, 0, qtdVar);
+        System.arraycopy(x, qtdVar, s, 0, qtdRestMI);
+        System.arraycopy(x, qtdVar + qtdRestMI, lambda, 0, qtdRestI);
+        System.arraycopy(x, qtdVar + qtdRestMI + qtdRestI, pi, 0, qtdRestMI);
     }
     
-    public void geraVetorX(double[] x, double[] var, double[] s, double[] lambda, double[] pi){
-        System.arraycopy(var, 0, x, 0, QTD_VAR);
-        System.arraycopy(s, 0, x, QTD_VAR, QTD_REST_MI);
-        System.arraycopy(lambda, 0, x, QTD_VAR + QTD_REST_MI, QTD_REST_I);
-        System.arraycopy(pi, 0, x, QTD_VAR + QTD_REST_MI + QTD_REST_I, QTD_REST_MI);
+    public static void geraVetorX(double[] x, double[] var, double[] s, double[] lambda, double[] pi){
+        System.arraycopy(var, 0, x, 0, qtdVar);
+        System.arraycopy(s, 0, x, qtdVar, qtdRestMI);
+        System.arraycopy(lambda, 0, x, qtdVar + qtdRestMI, qtdRestI);
+        System.arraycopy(pi, 0, x, qtdVar + qtdRestMI + qtdRestI, qtdRestMI);
     }
     
-    class func implements Funcao{
+    static class func implements Funcao{
         
         @Override
         public double f(double[] x){
-            double[] var = new double[QTD_VAR];
-            double[] s = new double[QTD_REST_MI];
-            double[] lambda = new double[QTD_REST_I];
-            double[] pi = new double[QTD_REST_MI];
+            double[] var = new double[qtdVar];
+            double[] s = new double[qtdRestMI];
+            double[] lambda = new double[qtdRestI];
+            double[] pi = new double[qtdRestMI];
             
             xToVars(x, var, s, lambda, pi);
        
-            return funcaoPDBL(funcaoPrincipal, restricoesMenorIgual, restricoesIgual, var, s, lambda, pi);
+            return funcaoPDBL(biodig.objetivo, biodig.restMI, biodig.restI, var, s, lambda, pi);
         }
     }    
     
-    double normaVet(double[] x){           //sqrt(soma(x_i))
+    static double normaVet(double[] x){           //sqrt(soma(x_i))
         double soma = 0;
         for(int i=0; i < x.length; i++)
             soma += x[i] * x[i];
         return Math.sqrt(soma);
     }
     
-    void multVet(double[] x, int c){       // x = x*c;
+    static void multVet(double[] x, int c){       // x = x*c;
         for(int i=0; i < x.length; i++)
             x[i] *= c;
     }
 
-    void somaVet(double[] v1,double[] v2){ // v1 = v1 + v2;
+    static void somaVet(double[] v1,double[] v2){ // v1 = v1 + v2;
         for(int i = 0;i < v1.length; i++)
             v1[i] += v2[i];
     }
     
-    boolean verificaKKT(Funcao funcao,Funcao[] restricoes_LE, Funcao[] restricoes_E,
+    static boolean verificaKKT(Funcao funcao,Funcao[] restricoes_LE, Funcao[] restricoes_E,
                         double[] x, double epsilon){
         boolean viavel = true;
         double result;
@@ -297,7 +234,7 @@ public class OtimizaBiodigestor {
         return viavel;
     }
     
-    boolean temNan(double[] x){
+    static boolean temNan(double[] x){
         boolean test = false;
         double valor;
         
@@ -310,23 +247,24 @@ public class OtimizaBiodigestor {
         return test;
     }   
         
-    public double[] executaOtimizacao(){
-        double[] var = new double[] {4,5};//QTD_VAR
+    public static void executaOtimizacao(){
+        double[] var = new double[] {4,5};//qtdVar
         double[] s = new double[] {0.5,0.5,0.5,0.5,0.5};//QTD_REST_LE
-        double[] lambda = new double[QTD_REST_I];
+        double[] lambda = new double[qtdRestI];
         double[] pi = new double[] {0.5,0.5,0.5,0.5,0.5};//QTD_REST_LE
         double beta = 10;
         double alphap, alphad;
         double menor;
         double epsilon = 0.0001;
         func funcao = new func();
-        FuncaoBiodigestorIndiano funcaoBiodigestor = new FuncaoBiodigestorIndiano();  
+        //FuncaoBiodigestorIndiano funcaoBiodigestor = new FuncaoBiodigestorIndiano();  
         
-        double[][] Hessiana = new double[total_variaveis][total_variaveis];
-        double[] grad = new double[total_variaveis];
-        double[] d = new double[total_variaveis];
-        double[] x = new double[total_variaveis];
+        double[][] Hessiana = new double[totalVariaveis][totalVariaveis];
+        double[] grad = new double[totalVariaveis];
+        double[] d = new double[totalVariaveis];
+        double[] x = new double[totalVariaveis];
         
+        //long inicio = System.currentTimeMillis();
         for(long k = 0; k < 10000000; k++){
             geraVetorX(x, var, s, lambda, pi);
             do{
@@ -339,7 +277,7 @@ public class OtimizaBiodigestor {
                 menor = 1;
                 
                 //s vai de x[2] até x[6]
-                for(int i = QTD_VAR; i < QTD_VAR + QTD_REST_MI; i++)
+                for(int i = qtdVar; i < qtdVar + qtdRestMI; i++)
                     if(d[i] < 0)
                         menor = ((x[i] / Math.abs(d[i])) < menor) ? (x[i] / Math.abs(d[i])) : (menor);
 
@@ -349,16 +287,16 @@ public class OtimizaBiodigestor {
                 menor = 1;
                 
                 //pi vai de x[7] até x[11]
-                for(int i = total_variaveis - QTD_REST_MI; i < total_variaveis; i++)
+                for(int i = totalVariaveis - qtdRestMI; i < totalVariaveis; i++)
                     if(d[i] < 0)
                         menor = ((x[i]/Math.abs(d[i]))<menor)?(x[i]/Math.abs(d[i])):(menor);
                 alphad = 0.95 * menor;
 
                 //Atualiza o x
-                for(int i = 0; i < total_variaveis; i++)
-                    x[i] += (i < QTD_VAR + QTD_REST_MI) ? (alphap * d[i]) : (alphad * d[i]);
+                for(int i = 0; i < totalVariaveis; i++)
+                    x[i] += (i < qtdVar + qtdRestMI) ? (alphap * d[i]) : (alphad * d[i]);
 
-                for(int i = QTD_VAR; i < total_variaveis; i++)
+                for(int i = qtdVar; i < totalVariaveis; i++)
                     x[i] = (x[i] < epsilon) ? (epsilon) : (x[i]);
                 
                 if(temNan(x)){
@@ -377,7 +315,7 @@ public class OtimizaBiodigestor {
            xToVars(x, var, s, lambda, pi);
 
             if(normaVet(grad) < epsilon){
-                if( verificaKKT(funcaoBiodigestor, restricoesMenorIgual, restricoesIgual, var, epsilon) )
+                if( verificaKKT(biodig.objetivo, biodig.restMI, biodig.restI, var, epsilon) )
                     break;
             }
             else
@@ -386,8 +324,10 @@ public class OtimizaBiodigestor {
             if(mi < 0.000000001)
                 mi = (mi * 2) * 10000000;
         }
+        //long fim = System.currentTimeMillis();
+        //System.out.println(fim - inicio);
 
-        return var;
+        biodig.determinaSolucao(var);
     }
 
 }

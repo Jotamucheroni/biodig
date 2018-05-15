@@ -352,7 +352,7 @@ public class Dados extends javax.swing.JFrame {
         entradas[2] = jTextField14; //Número de lampiões
         entradas[3] = jTextField15; //Tempo (horas) de uso dos lampiões
         entradas[4] = jTextField16; //Número de chuveiros
-        entradas[5] = jTextField1;
+        entradas[5] = jTextField1;  //Pressão máxima
         
         //Labels Batelada
         lbBatelada = new javax.swing.JLabel[numEntBatelada] ;
@@ -389,19 +389,7 @@ public class Dados extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        final short COZIMENTO = 0, MOTOR = 1, ILUMINACAO = 2, BANHO = 3;
-        final short PUF = 0, PEP = 1;
-        double[] vetConsumo = new double[] { 0.42, 0.45, 0.08, 0.74 }; //cozimento, motor, iluminação, banho
-        double[] vetK = new double[] {3, 1.5, 4.5, 6, 2.5}; //suíno, galinhas poedeiras, gado de corte, gado leiteiro, exemplo
-        double K, B, Vp, Vb, Vr, Vg, V, V1, V2, v, Di, H, Dg, Ds, Db, De, h, h1, h2, a, b, e2, p, esp, E, Pg, r, tensao = 750, n; //tensao = tensão de tração adimíssível do material da parede do gasômetro (kgf/cm²)
-        double producaoHoraria;
-        double cozimentoTotal, motorTotal, iluminacaoTotal, banhoTotal;
-        double taxaCozimento, taxaMotor, taxaIluminacao, taxaBanho;
-        int qtdCozimento, qtdMotor, qtdIluminacao, qtdBanho;
         double[] valores = new double[numTextField], valBatelada = new double[numEntBatelada]; //valBatelada - PUF e PEP - Batelada
-        final javax.swing.table.TableModel modelo =  jTable1.getModel(); //Tabela de motores
-        double[][] matriz = new double[Integer.parseInt(jSpinner1.getValue().toString())][2]; //Matriz para os valores da tabela de motores
-        double[] x;
         boolean test = true;
         
         //Leitura das caixas de texto padrão
@@ -465,6 +453,8 @@ public class Dados extends javax.swing.JFrame {
 
         //Leitura da tabela de motores
         int numLinhas = Integer.parseInt(jSpinner1.getValue().toString());
+        final javax.swing.table.TableModel modelo =  jTable1.getModel(); //Tabela de motores
+        double[][] matriz = new double[Integer.parseInt(jSpinner1.getValue().toString())][2]; //Matriz para os valores da tabela de motores
         
         for(int i = 0; i < numLinhas && test; i++){
             try {
@@ -496,6 +486,10 @@ public class Dados extends javax.swing.JFrame {
         
         //Se as entradas estão corretas, calcular o consumo diário de biogás
         if(test){
+            final short COZIMENTO = 0, MOTOR = 1, ILUMINACAO = 2, BANHO = 3;
+            double cozimentoTotal, motorTotal, iluminacaoTotal, banhoTotal, B;
+            double[] vetConsumo = new double[] { 0.42, 0.45, 0.08, 0.74 }; //cozimento, motor, iluminação, banho
+            
             cozimentoTotal = vetConsumo[COZIMENTO] * valores[1];
             iluminacaoTotal = vetConsumo[ILUMINACAO] * valores[2] * valores[3];
             banhoTotal = vetConsumo[BANHO] * valores[4];
@@ -507,25 +501,20 @@ public class Dados extends javax.swing.JFrame {
             B = cozimentoTotal + motorTotal + iluminacaoTotal + banhoTotal;
             
             //Se houver consumo, calcular as dimensões
-            if(B != 0){           
+            if(B != 0){
+                double K, V, Vb, producaoHoraria;
+                double[] vetK = new double[] {3, 1.5, 4.5, 6, 2.5}; //suíno, galinhas poedeiras, gado de corte, gado leiteiro, exemplo
+                
                 K = vetK[jComboBox1.getSelectedIndex()];
                 V = K * B;
-                Vb = V * 1.1;
-
-                OtimizaBiodigestor otimo = new OtimizaBiodigestor();
-                otimo.setVb(Vb);
-                otimo.setMi(0.0001);
-                //long inicio = System.currentTimeMillis();
-                x = otimo.executaOtimizacao();
-                //long fim = System.currentTimeMillis();
-                //System.out.println(fim - inicio);
-                Di = x[0];
-                H = x[1];
-
+                Vb = V * 1.1;                
                 producaoHoraria = B / 24;
 
-                //Se a tabela de horários foi preenchida
+                //Se a tabela de horários foi preenchida, calcula volume útil do gasômetro
                 if(tabelaHorarios != null){
+                    int qtdCozimento, qtdMotor, qtdIluminacao, qtdBanho;
+                    double taxaCozimento, taxaMotor, taxaIluminacao, taxaBanho, V2;
+                    
                     qtdCozimento = 0;
                     qtdMotor = 0;
                     qtdIluminacao = 0;
@@ -597,37 +586,14 @@ public class Dados extends javax.swing.JFrame {
                     V2 = maiorVolume;
                     if(menorTotal < 0)
                         V2 -= menorTotal;
-
-                    Dg = Di + 0.1; //diâmetro do gasômetro
-                    r = 0.5 * Dg * 100; //raio do gasometro 
-                    h2 = (4 * V2) / (Math.PI * Dg * Dg);
-                    h2 *= 1.1; //reforço 10% para o gasometro comportar o volume de biogas
-                    h1 = valores[5]; //altura ociosa
-                    V1 = (Math.PI * (Dg * Dg) * h1) / 4;
-                    Vg = V1 + V2;
-                    p = valores[5] / 10;
-                    Pg = (Math.PI * p *(Dg * Dg * 100 * 100)) / 4;//0.015 pressão máxima para o funcionamento normal dos aparelhos
-
-
-                    h = H - h2;
-                    esp = 0.24; //espessura de um tijolo revestido, referente à parede divisória
-                    Vp = h * Di * esp;
-                    Vr = Vb - Vp;
-
-                    //Limitar-se-á a indicar estas medidas por julgarmos desnecessários maiores detalhes
-                    //Ortolani /\
-                    E = (p * r) / tensao;
-                    a = 0.5;
-                    b = 0.15;//altura da parede do biodigestor acima do nível do substrato
-                    e2 = 0.3;
-                    Ds = Dg + 0.1;
-                    n = valores[0];
                     
-                    De = Di + 2 * esp; //parede de 1 tijolo e 0.24 = espessura
-                    Db = De + 0.2;
-                    
-                    v = V / n; //v = V/n... n = dias. Nesse caso 1
+                    //Calcula Di e H
+                    Biodigestor biodig = new Indiano(Vb, valores[0], valores[5], V2);                
+                    OtimizaBiodigestor.setBiodigesotor(biodig);
+                    OtimizaBiodigestor.setMi(0.0001); 
+                    OtimizaBiodigestor.executaOtimizacao();                    
 
+                    //Exibe formulário com os resultados
                     if(resultados == null)
                     {
                         resultados = new Resultados();
@@ -635,27 +601,13 @@ public class Dados extends javax.swing.JFrame {
                         resultados.setLocationRelativeTo(null);
                     }
                     
-                    resultados.labels[0].setText(String.format("%.2f", Di)+" m");
-                    resultados.labels[1].setText(String.format("%.2f", H)+" m");
-                    resultados.labels[2].setText(String.format("%.2f", Vb)+" m³");
-                    resultados.labels[3].setText(String.format("%.2f", h)+" m");
-                    resultados.labels[4].setText(String.format("%.2f", Vp)+" m³");
-                    resultados.labels[5].setText(String.format("%.2f", Vr)+" m³");
-                    resultados.labels[6].setText(String.format("%.2f", b)+" m");
-                    resultados.labels[7].setText(String.format("%.2f", De)+" m");
-                    resultados.labels[8].setText(String.format("%.2f", Db)+" m");
-                    resultados.labels[9].setText(String.format("%.2f", Dg)+" m");
-                    resultados.labels[10].setText(String.format("%.2f", h1)+" m");
-                    resultados.labels[11].setText(String.format("%.2f", h2)+" m");
-                    resultados.labels[12].setText(String.format("%.2f", V1)+" m³");
-                    resultados.labels[13].setText(String.format("%.2f", V2)+" m³");
-                    resultados.labels[14].setText(String.format("%.2f", Vg)+" m³");
-                    resultados.labels[15].setText(String.format("%.4f", E)+" cm");
-                    resultados.labels[16].setText(String.format("%.2f", Pg)+" kgf");
-                    resultados.labels[17].setText(String.format("%.2f", Ds)+" m");
-                    resultados.labels[18].setText(String.format("%.2f", a)+" m");
-                    resultados.labels[19].setText(String.format("%.2f", v)+" m³");
-                    resultados.labels[20].setText(String.format("%.2f", e2)+" m");
+                    int numParam = biodig.params.length;
+                    
+                    for(int i = 0; i < numParam; i++)
+                    {
+                        resultados.labelsRotulo[i].setText(biodig.params[i].getRotulo());
+                        resultados.labelsResult[i].setText(biodig.params[i].getValorFormatado());
+                    }
 
                     resultados.setVisible(true);
 

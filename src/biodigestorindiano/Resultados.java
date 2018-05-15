@@ -6,32 +6,57 @@ package biodigestorindiano;
  */
 public class Resultados extends javax.swing.JFrame {
     
-    public final int numTextField = 21;
-    public javax.swing.JLabel[] labels;
+    public final int numLabel = 21;
+    public javax.swing.JLabel[] labelsResult, labelsRotulo;
     
-    public void inicializa_labels(){
-        labels = new javax.swing.JLabel[numTextField];
-        labels[0] = jLabel2;
-        labels[1] = jLabel24;
-        labels[2] = jLabel25;
-        labels[3] = jLabel26;
-        labels[4] = jLabel27;
-        labels[5] = jLabel28;
-        labels[6] = jLabel29;
-        labels[7] = jLabel30;
-        labels[8] = jLabel31;
-        labels[9] = jLabel32;
-        labels[10] = jLabel33;
-        labels[11] = jLabel34;
-        labels[12] = jLabel35;
-        labels[13] = jLabel36;
-        labels[14] = jLabel37;
-        labels[15] = jLabel38;
-        labels[16] = jLabel39;
-        labels[17] = jLabel40;
-        labels[18] = jLabel41;
-        labels[19] = jLabel42;
-        labels[20] = jLabel43;
+    public final void inicializaLabels(){
+        labelsResult = new javax.swing.JLabel[numLabel];
+        
+        labelsResult[0] = jLabel2;
+        labelsResult[1] = jLabel24;
+        labelsResult[2] = jLabel25;
+        labelsResult[3] = jLabel26;
+        labelsResult[4] = jLabel27;
+        labelsResult[5] = jLabel28;
+        labelsResult[6] = jLabel29;
+        labelsResult[7] = jLabel30;
+        labelsResult[8] = jLabel31;
+        labelsResult[9] = jLabel32;
+        labelsResult[10] = jLabel33;
+        labelsResult[11] = jLabel34;
+        labelsResult[12] = jLabel35;
+        labelsResult[13] = jLabel36;
+        labelsResult[14] = jLabel37;
+        labelsResult[15] = jLabel38;
+        labelsResult[16] = jLabel39;
+        labelsResult[17] = jLabel40;
+        labelsResult[18] = jLabel41;
+        labelsResult[19] = jLabel42;
+        labelsResult[20] = jLabel43;
+        
+        labelsRotulo = new javax.swing.JLabel[numLabel];
+        
+        labelsRotulo[0] = jLabel3;
+        labelsRotulo[1] = jLabel4;
+        labelsRotulo[2] = jLabel5;
+        labelsRotulo[3] = jLabel6;
+        labelsRotulo[4] = jLabel7;
+        labelsRotulo[5] = jLabel8;
+        labelsRotulo[6] = jLabel9;
+        labelsRotulo[7] = jLabel10;
+        labelsRotulo[8] = jLabel11;
+        labelsRotulo[9] = jLabel12;
+        labelsRotulo[10] = jLabel13;
+        labelsRotulo[11] = jLabel14;
+        labelsRotulo[12] = jLabel15;
+        labelsRotulo[13] = jLabel16;
+        labelsRotulo[14] = jLabel17;
+        labelsRotulo[15] = jLabel18;
+        labelsRotulo[16] = jLabel19;
+        labelsRotulo[17] = jLabel20;
+        labelsRotulo[18] = jLabel21;
+        labelsRotulo[19] = jLabel22;
+        labelsRotulo[20] = jLabel23;
     }
     
     /**
@@ -39,7 +64,7 @@ public class Resultados extends javax.swing.JFrame {
      */
     public Resultados() {
         initComponents();
-        inicializa_labels();
+        inicializaLabels();
     }
 
     /**
@@ -96,6 +121,8 @@ public class Resultados extends javax.swing.JFrame {
         jLabel42 = new javax.swing.JLabel();
         jLabel43 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+
+        setPreferredSize(new java.awt.Dimension(1100, 731));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Informações para montagem do Biodigestor Indiano"));
 
@@ -350,7 +377,7 @@ public class Resultados extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 524, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(12, 12, 12)
                 .addComponent(jButton1)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
