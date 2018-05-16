@@ -75,7 +75,7 @@ public class Chines extends Biodigestor {
     final void inicializaFuncoes(){
         varIni = new double[] {4, 5};
         sIni = new double[] {0.5, 0.5, 0.5, 0.5};
-        lambdaIni  = new double[QTD_REST_I];
+        lambdaIni  = new double[] {};
         piIni = new double[] {0.5, 0.5, 0.5, 0.5};
         
         objetivo = new FuncaoObjetivo();

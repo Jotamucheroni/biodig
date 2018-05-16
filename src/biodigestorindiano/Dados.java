@@ -598,6 +598,9 @@ public class Dados extends javax.swing.JFrame {
                         case 1:
                             biodig = new Chines(Vb, valores[0], valores[5], V2);
                             break;
+                        case 2:
+                            biodig = new Batelada();
+                            break;
                         default:
                             biodig = new Indiano(Vb, valores[0], valores[5], V2);
                     }

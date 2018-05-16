@@ -125,7 +125,7 @@ public class Indiano extends Biodigestor {
         r = 0.5 * Dg * 100; //raio do gasometro 
         h2 = (4 * Vug) / (Math.PI * Dg * Dg);
         h2 *= 1.1; //reforço 10% para o gasometro comportar o volume de biogas
-        h1 = pressaoMax; //altura ociosa
+        b = h1 = pressaoMax; //altura ociosa
         V1 = (Math.PI * (Dg * Dg) * h1) / 4;
         Vg = V1 + Vug;
         p = pressaoMax / 10;
@@ -141,7 +141,6 @@ public class Indiano extends Biodigestor {
         //Ortolani /\
         E = (p * r) / tensao;
         a = 0.5;
-        b = 0.15;//altura da parede do biodigestor acima do nível do substrato
         e2 = 0.3;
         Ds = Dg + 0.1;
         n = freq;
