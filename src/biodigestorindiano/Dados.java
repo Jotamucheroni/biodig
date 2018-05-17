@@ -6,7 +6,7 @@ package biodigestorindiano;
  */
 public class Dados extends javax.swing.JFrame {
 
-    final int numTextField = 6, numEntBatelada = 2;
+    final int numTextField = 6, numEntBatelada = 5, BATELADA = 2;
     javax.swing.JTextField[] entradas, entBatelada;
     javax.swing.JLabel[] lbBatelada;
     /**
@@ -56,6 +56,12 @@ public class Dados extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
         jTextField4 = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jTextField6 = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        jTextField7 = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -195,6 +201,12 @@ public class Dados extends javax.swing.JFrame {
 
         jLabel7.setText("PEP [dias]:");
 
+        jLabel8.setText("Sólidos totais [%]:");
+
+        jLabel9.setText("Sólidos totais final:");
+
+        jLabel10.setText("Rendimento [m³/kg]:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -204,14 +216,6 @@ public class Dados extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jButton3)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton4))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel15)
@@ -221,27 +225,54 @@ public class Dados extends javax.swing.JFrame {
                                     .addComponent(jLabel18)
                                     .addComponent(jLabel4))
                                 .addGap(6, 6, 6)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, 1, Short.MAX_VALUE)
+                                                .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.LEADING, 0, 173, Short.MAX_VALUE)))
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                    .addComponent(jTextField15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                                    .addComponent(jTextField14, javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jTextField16, javax.swing.GroupLayout.Alignment.LEADING))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabel8)
+                                                    .addComponent(jLabel7)
+                                                    .addComponent(jLabel9)))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabel6))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabel10)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jTextField7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                                .addComponent(jTextField6)
+                                                .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.LEADING)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jButton3)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jButton1)
                                         .addGap(18, 18, 18)
-                                        .addComponent(jLabel6))
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jTextField16, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                            .addComponent(jTextField14, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(jLabel7))
-                                        .addComponent(jTextField1)
-                                        .addComponent(jTextField17)
-                                        .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jButton2)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton4)))
+                                .addGap(12, 12, 12)))
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(38, 38, 38))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -279,15 +310,21 @@ public class Dados extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel16)
-                            .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8)
+                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel17)
-                            .addComponent(jTextField16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jTextField16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)
+                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel18)
-                            .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jTextField17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10)
+                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
@@ -335,10 +372,9 @@ public class Dados extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 24, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -358,31 +394,131 @@ public class Dados extends javax.swing.JFrame {
         lbBatelada = new javax.swing.JLabel[numEntBatelada] ;
         (lbBatelada[0] = jLabel6).setVisible(false);
         (lbBatelada[1] = jLabel7).setVisible(false);
+        (lbBatelada[2] = jLabel8).setVisible(false);
+        (lbBatelada[3] = jLabel9).setVisible(false);
+        (lbBatelada[4] = jLabel10).setVisible(false);
         
         //Entradas Batelada
-        entBatelada = new javax.swing.JTextField[2];
+        entBatelada = new javax.swing.JTextField[numEntBatelada];
         (entBatelada[0] = jTextField3).setVisible(false);
         (entBatelada[1] = jTextField4).setVisible(false);
+        (entBatelada[2] = jTextField5).setVisible(false);
+        (entBatelada[3] = jTextField6).setVisible(false);
+        (entBatelada[4] = jTextField7).setVisible(false);
+        
+        jLabel1.setVisible(true);
+        jComboBox1.setVisible(true);
     }
     
     private void entradasTeste(){
-        jComboBox1.setSelectedIndex(4);
-        entradas[0].setText("50");
-        entradas[1].setText("5");
-        jSpinner1.setValue(1);
+        int opcao = jComboBox2.getSelectedIndex();
+        
+        jSpinner1.setValue( (opcao == BATELADA) ? 0 : 1);
         atualiza_tabela();
-        javax.swing.table.TableModel modelo = jTable1.getModel();
-        modelo.setValueAt(5,0,0);
-        modelo.setValueAt(1,0,1);
-        entradas[2].setText("6");
-        entradas[3].setText("4");
-        entradas[4].setText("5");
-        entradas[5].setText("0.15");
+        
+        if( opcao == BATELADA )
+        {
+            entradas[0].setText("65");
+            entradas[1].setText("8");
+            entradas[2].setText("4");
+            entradas[3].setText("4");
+            entradas[4].setText("14");
+            entradas[5].setText("0.2");
+            
+            entBatelada[0].setText("150");
+            entBatelada[1].setText("105");
+            entBatelada[2].setText("85.5");
+            entBatelada[3].setText("8");
+            entBatelada[4].setText("0.15");
+        }
+        else
+        {
+            //Motores
+            javax.swing.table.TableModel modelo = jTable1.getModel();
+            modelo.setValueAt(5,0,0);
+            modelo.setValueAt(1,0,1);
+            
+            jComboBox1.setSelectedIndex(4);
+            entradas[0].setText("50");
+            entradas[1].setText("5");
+            entradas[2].setText("6");
+            entradas[3].setText("4");
+            entradas[4].setText("5");
+            entradas[5].setText("0.15");
+        }
+    }
+        
+    Horarios horarios = null;
+    Resultados resultados = null;
+    int[][] tabelaHorarios = null;
+    
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    
+    private void atualiza_tabela(){
+        int valor = Integer.parseInt(jSpinner1.getValue().toString());
+        /*  
+            A conversão abaixo não é totalmente segura e foi mantida apenas
+            porque não foi encontrada uma solução mais adequada. Não é possível 
+            garantir que o TableModel retornado pela função "getModel()" é um 
+            DefaultTableModel. Um erro do tipo ClassCastingException pode 
+            ocorrer durante a execução se esse programa for compilado com uma 
+            versão diferente do Java daquela escolhida para essa implementação 
+            (Java 8)
+        */
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+
+        while(jTable1.getRowCount() != valor)
+            if(jTable1.getRowCount() < valor)
+                modelo.addRow(new Object[] {0,0});
+            else
+                modelo.removeRow( jTable1.getRowCount() - 1 );
     }
     
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jComboBox2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox2ItemStateChanged
+        boolean visivel = jComboBox2.getSelectedIndex() == 2;
+
+        for(int i = 0; i < numEntBatelada; i++)
+        {
+            lbBatelada[i].setVisible(visivel);
+            entBatelada[i].setVisible(visivel);
+        }
+        
+        jLabel1.setVisible(!visivel);
+        jComboBox1.setVisible(!visivel);
+    }//GEN-LAST:event_jComboBox2ItemStateChanged
+
+    private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
+        atualiza_tabela();
+    }//GEN-LAST:event_jSpinner1StateChanged
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        if(horarios == null)
+        {
+            horarios = new Horarios();
+            horarios.janelaDados = this;
+            horarios.setLocationRelativeTo(null);
+        }
+        setVisible(false);
+        horarios.setVisible(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        entradasTeste();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     private void jTextField14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField14ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField14ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         System.exit(0);
@@ -392,7 +528,7 @@ public class Dados extends javax.swing.JFrame {
         double[] valores = new double[numTextField], valBatelada = new double[numEntBatelada]; //valBatelada - PUF e PEP - Batelada
         boolean test = true;
         int opcao = jComboBox2.getSelectedIndex();
-        
+
         //Leitura das caixas de texto padrão
         for(int i = 0; i < numTextField && test; i++){
             try {
@@ -404,7 +540,7 @@ public class Dados extends javax.swing.JFrame {
                 else
                 {
                     valores[i] = Double.parseDouble(entradas[i].getText());
-                    
+
                     if(valores[i] < 0)
                     {
                         test = false;
@@ -416,13 +552,13 @@ public class Dados extends javax.swing.JFrame {
                 entradas[i].requestFocus();
             }
         }
-        
+
         if(valores[0] == 0)
         {
             test = false;
             entradas[0].requestFocus();
         }
-        
+
         //Leitura das caixas de texto exclusivas do modelo Batelada
         if(opcao == 2 && test)
         {
@@ -438,7 +574,7 @@ public class Dados extends javax.swing.JFrame {
                     else
                     {
                         valBatelada[i] = Double.parseDouble(entBatelada[i].getText());
-                        
+
                         if(valBatelada[i] <= 0)
                         {
                             test = false;
@@ -456,7 +592,7 @@ public class Dados extends javax.swing.JFrame {
         int numLinhas = Integer.parseInt(jSpinner1.getValue().toString());
         final javax.swing.table.TableModel modelo =  jTable1.getModel(); //Tabela de motores
         double[][] matriz = new double[Integer.parseInt(jSpinner1.getValue().toString())][2]; //Matriz para os valores da tabela de motores
-        
+
         for(int i = 0; i < numLinhas && test; i++){
             try {
                 if(modelo.getValueAt(i, 0) == null)
@@ -474,7 +610,7 @@ public class Dados extends javax.swing.JFrame {
                 }
                 else
                     matriz[i][1] = Double.parseDouble(modelo.getValueAt(i, 1).toString());
-                
+
                 if(matriz[i][0] < 0 || matriz[i][1] < 0)
                 {
                     test = false;
@@ -484,37 +620,38 @@ public class Dados extends javax.swing.JFrame {
                 test = false;
             }
         }
-        
+
         //Se as entradas estão corretas, calcular o consumo diário de biogás
         if(test){
             final short COZIMENTO = 0, MOTOR = 1, ILUMINACAO = 2, BANHO = 3;
             double cozimentoTotal, motorTotal, iluminacaoTotal, banhoTotal, B;
             double[] vetConsumo = new double[] { 0.42, 0.45, 0.08, 0.74 }; //cozimento, motor, iluminação, banho
-            
+
             cozimentoTotal = vetConsumo[COZIMENTO] * valores[1];
             iluminacaoTotal = vetConsumo[ILUMINACAO] * valores[2] * valores[3];
             banhoTotal = vetConsumo[BANHO] * valores[4];
             motorTotal = 0;
-            
+
             for(int i = 0; i < Integer.parseInt(jSpinner1.getValue().toString()); i++)
-                motorTotal += vetConsumo[MOTOR] * matriz[i][0] * matriz[i][1];               
-            
+                motorTotal += vetConsumo[MOTOR] * matriz[i][0] * matriz[i][1];
+
             B = cozimentoTotal + motorTotal + iluminacaoTotal + banhoTotal;
-            
+
             //Se houver consumo, calcular as dimensões
             if(B != 0){
-                double K, Vb, producaoHoraria;
+                double K, Vb;
                 double[] vetK = new double[] {3, 1.5, 4.5, 6, 2.5}; //suíno, galinhas poedeiras, gado de corte, gado leiteiro, exemplo
-                
+
                 K = vetK[jComboBox1.getSelectedIndex()];
-                Vb = K * B;            
-                producaoHoraria = B / 24;
+                Vb = K * B;
 
                 //Se a tabela de horários foi preenchida, calcula volume útil do gasômetro
                 if(tabelaHorarios != null){
                     int qtdCozimento, qtdMotor, qtdIluminacao, qtdBanho;
-                    double taxaCozimento, taxaMotor, taxaIluminacao, taxaBanho, V2;
-                    
+                    double producaoHoraria, taxaCozimento, taxaMotor, taxaIluminacao, taxaBanho, V2;
+
+                    producaoHoraria = B / 24;
+
                     qtdCozimento = 0;
                     qtdMotor = 0;
                     qtdIluminacao = 0;
@@ -547,11 +684,11 @@ public class Dados extends javax.swing.JFrame {
                     final short INTERVALO = 0, ACUMULADO = 1, PRODUCAO = 2, CONSUMO = 3, TOTAL = 4;
                     double[][] quadroProducao = new double[tabelaHorarios.length][5];
                     /*
-                        A: Volume que deve estar armazenado no início de cada período
-                        Z: Volume que deverá ser armazendado no fim do período
+                    A: Volume que deve estar armazenado no início de cada período
+                    Z: Volume que deverá ser armazendado no fim do período
                     */
-                    double maiorA = 0, maiorZ = 0; 
-                    
+                    double maiorA = 0, maiorZ = 0;
+
                     for(int i = 0; i < tabelaHorarios.length; i++){
                         if(tabelaHorarios[i][0] > tabelaHorarios[i][1])
                             quadroProducao[i][INTERVALO] = tabelaHorarios[i][1] + (24 - tabelaHorarios[i][0]);
@@ -560,54 +697,56 @@ public class Dados extends javax.swing.JFrame {
 
                         quadroProducao[i][PRODUCAO] = producaoHoraria * quadroProducao[i][0];
                         quadroProducao[i][CONSUMO]  = taxaCozimento * tabelaHorarios[i][5] +
-                                                      taxaMotor * tabelaHorarios[i][2] +
-                                                      taxaIluminacao * tabelaHorarios[i][4] +
-                                                      taxaBanho * tabelaHorarios[i][3];
+                        taxaMotor * tabelaHorarios[i][2] +
+                        taxaIluminacao * tabelaHorarios[i][4] +
+                        taxaBanho * tabelaHorarios[i][3];
 
                         if(quadroProducao[i][CONSUMO] - quadroProducao[i][PRODUCAO] > maiorA)
                             maiorA = quadroProducao[i][CONSUMO] - quadroProducao[i][PRODUCAO];
-                        
+
                         if(quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO] > maiorZ)
-                            maiorZ = quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO];                        
+                            maiorZ = quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO];
                     }
-                    
+
                     double maiorVolume = (maiorA >= maiorZ) ? maiorA : maiorZ, menorTotal = B + 1;
-                    
+
                     quadroProducao[0][ACUMULADO] = 0;
                     quadroProducao[0][TOTAL] = quadroProducao[0][PRODUCAO] - quadroProducao[0][CONSUMO];
-                    
+
                     for(int i = 1; i < tabelaHorarios.length; i++){
                         quadroProducao[i][ACUMULADO] = (quadroProducao[i - 1][TOTAL] < maiorVolume) ? quadroProducao[i - 1][TOTAL] : maiorVolume;
                         quadroProducao[i][TOTAL] = quadroProducao[i][ACUMULADO] + quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO];
                         if( quadroProducao[i][TOTAL] < menorTotal)
                             menorTotal = quadroProducao[i][TOTAL];
                     }
-                    
+
                     V2 = maiorVolume;
                     if(menorTotal < 0)
                         V2 -= menorTotal;
-                    
+
                     //Calcula Di e H
                     Biodigestor biodig;
-                    
+
                     switch( opcao )
                     {
                         case 0:
                             biodig = new Indiano(Vb, valores[0], valores[5], V2);
-                            break;
+                        break;
                         case 1:
                             biodig = new Chines(Vb, valores[0], valores[5], V2);
-                            break;
+                        break;
                         case 2:
-                            biodig = new Batelada();
-                            break;
+                            biodig = new Batelada(B, valores[0], valores[5], V2, valBatelada[0],
+                                                  valBatelada[1], valBatelada[2], valBatelada[3],
+                                                  valBatelada[4]);
+                        break;
                         default:
                             biodig = new Indiano(Vb, valores[0], valores[5], V2);
                     }
-                    
+
                     OtimizaBiodigestor.setBiodigesotor(biodig);
-                    OtimizaBiodigestor.setMi(0.0001); 
-                    OtimizaBiodigestor.executaOtimizacao();                    
+                    OtimizaBiodigestor.setMi(0.0001);
+                    OtimizaBiodigestor.executaOtimizacao();
 
                     //Exibe formulário com os resultados
                     if(resultados == null)
@@ -616,100 +755,34 @@ public class Dados extends javax.swing.JFrame {
                         resultados.janelaDados = this;
                         resultados.setLocationRelativeTo(null);
                     }
-                    
+
                     int numParam = biodig.params.length, i;
-                    
+
                     for(i = 0; i < numParam; i++)
                     {
                         resultados.labelsRotulo[i].setText(biodig.params[i].getRotulo());
                         resultados.labelsResult[i].setText(biodig.params[i].getValorFormatado());
                     }
-                    
+
                     for( ; i < resultados.labelsRotulo.length ; i++)
                     {
                         resultados.labelsRotulo[i].setText("");
                         resultados.labelsResult[i].setText("");
                     }
-                    
+
                     resultados.setVisible(true);
 
                 }
                 else
                     javax.swing.JOptionPane.showMessageDialog(null, "Por favor, preencha também os horários das tarefas que utilizam biogás.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
-
             }
             else
                 javax.swing.JOptionPane.showMessageDialog(null, "Deve haver consumo de biogás para que as dimensões do biodigestor sejam calculadas.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
         }
         else
             javax.swing.JOptionPane.showMessageDialog(null, "Use apenas números não negativos para preencher os dados e use ponto para separar as casas decimais. \nA frequência de retirada dos resíduos e os dados de PUF e PEP (Batelada) também não podem ser iguais a zero.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        entradasTeste();
-    }//GEN-LAST:event_jButton3ActionPerformed
-    
-    Horarios horarios = null;
-    Resultados resultados = null;
-    int[][] tabelaHorarios = null;
-    
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        if(horarios == null)
-        {
-            horarios = new Horarios();
-            horarios.janelaDados = this;
-            horarios.setLocationRelativeTo(null);
-        }
-        setVisible(false); 
-        horarios.setVisible(true);    
-    }//GEN-LAST:event_jButton4ActionPerformed
-
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
-    
-    private void atualiza_tabela(){
-        int valor = Integer.parseInt(jSpinner1.getValue().toString());
-        /*  
-            A conversão abaixo não é totalmente segura e foi mantida apenas
-            porque não foi encontrada uma solução mais adequada. Não é possível 
-            garantir que o TableModel retornado pela função "getModel()" é um 
-            DefaultTableModel. Um erro do tipo ClassCastingException pode 
-            ocorrer durante a execução se esse programa for compilado com uma 
-            versão diferente do Java daquela escolhida para essa implementação 
-            (Java 8)
-        */
-        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-
-        while(jTable1.getRowCount() != valor)
-            if(jTable1.getRowCount() < valor)
-                modelo.addRow(new Object[] {0,0});
-            else
-                modelo.removeRow( jTable1.getRowCount() - 1 );
-    }
-    
-    private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
-        atualiza_tabela();
-    }//GEN-LAST:event_jSpinner1StateChanged
-
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
-
-    private void jComboBox2ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox2ItemStateChanged
-        boolean visivel = jComboBox2.getSelectedIndex() == 2;
-        
-        for(int i = 0; i < numEntBatelada; i++)
-        {
-            lbBatelada[i].setVisible(visivel);
-            entBatelada[i].setVisible(visivel);
-        }
-    }//GEN-LAST:event_jComboBox2ItemStateChanged
     
     /**
      * @param args the command line arguments
@@ -752,6 +825,7 @@ public class Dados extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
@@ -762,6 +836,8 @@ public class Dados extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
@@ -779,5 +855,8 @@ public class Dados extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextField6;
+    private javax.swing.JTextField jTextField7;
     // End of variables declaration//GEN-END:variables
 }

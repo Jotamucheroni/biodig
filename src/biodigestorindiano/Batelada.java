@@ -5,7 +5,7 @@ package biodigestorindiano;
  * @author jota
  */
 public class Batelada extends Biodigestor{
-    final int QTD_REST_MI = 5, QTD_REST_I = 0, QTD_PARAM = 15;
+    final int QTD_REST_MI = 5, QTD_REST_I = 0, QTD_PARAM = 16;
     final double VB_PADRAO = 56.062, FREQ_PADRAO = 65, PRESS_PADRAO = 0.2, VUG_PADRAO = 5;
     final double P = (Math.PI) / 4;
     
@@ -68,13 +68,35 @@ public class Batelada extends Biodigestor{
         this.Vug        = VUG_PADRAO;
     }
     
-    public Batelada(double Vb, double freq, double pressaoMax, double Vug){
+    public Batelada(double B, double PBC, double pressaoMax, double Vug, double PUF, 
+                    double PEP, double solidosTotais, double solidosTotaisFinais, 
+                    double rendmto){
         inicializaFuncoes();
         inicializaParametros();
-        setVb(Vb);
-        setFreq(freq);
+        
+        double iniPEP = (PUF >= PEP) ? (PUF - PEP) : 0, CB, PBBio, PBB, Eu, Es, W, A;
+        int N, unProdEfet = 0, diasFerm = 0;
+        //Número de unidades na bateria (N):
+        N = (int) Math.ceil( PUF / PBC);
+        for(int i = 0; i < N; i++)
+        {
+            if(diasFerm >= iniPEP && diasFerm <= PUF)
+                unProdEfet++;
+            diasFerm += PBC;
+        }
+        CB = B * PBC;
+        PBBio = rendmto / PEP;
+        PBB = PBBio * PBC * unProdEfet;
+        Eu = CB / PBB;
+        Es = Eu * (solidosTotais / 100);
+        W = Es / (solidosTotaisFinais / 100);
+        setVb(W / 1000);
+        A = W - Eu;
+        params[3].valor = N;
+        params[15].valor = A / 1000;
+        setFreq(PBC);
         setPressaoMax(pressaoMax);
-        setVug(Vug);
+        setVug(Vug / unProdEfet);//setVug(Vug);
     }
     
     @Override
@@ -102,9 +124,10 @@ public class Batelada extends Biodigestor{
         params = new Parametro[QTD_PARAM];
         String[] rotulos  = new String[] {"Diâmetro interno do biodigestor (Di):", "Altura do nível do substrato (H):", "Volume útil da unidade biodigestoras (Vd):", "Número de unidades da bateria (N): ", "Altura da parede acima do nível do substrato (b):", 
                                           "Altura do gasômetro acima da parede do biodigestor (c):", "Diâmetro do gasômetro (Dg):", "Altura ociosa do gasômetro (h1):", "Altura útil do gasômetro (h2):", "Altura do gasômetro(hg)", 
-                                          "Altura livre para deslocamento do gasômetro (h3):", "Volume ocioso do gasômetro (V1):", "Volume útil do gasômetro (V2):", "Volume do gasômetro (Vg):", "Diâmetro Interno da parede superior (Ds):"},
-                 formatos = new String[] {"%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f"},
-                 unidades = new String[] {   "m",    "m",   "m³",     "",    "m",    "m",    "m",    "m",    "m",    "m",    "m",   "m³",   "m³",   "m³",    "m"};
+                                          "Altura livre para deslocamento do gasômetro (h3):", "Volume ocioso do gasômetro (V1):", "Volume útil do gasômetro (V2):", "Volume do gasômetro (Vg):", "Diâmetro Interno da parede superior (Ds):",
+                                          "Água a ser adicionada ao substrato (A):"},
+                 formatos = new String[] {"%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f", "%.4f"},
+                 unidades = new String[] {   "m",    "m",   "m³",     "",    "m",    "m",    "m",    "m",    "m",    "m",    "m",   "m³",   "m³",   "m³",    "m",   "m³"};
         
         for(int i = 0; i < QTD_PARAM; i++)
             params[i] = new Parametro(0, rotulos[i], formatos[i], unidades[i]);
@@ -112,12 +135,11 @@ public class Batelada extends Biodigestor{
     
     @Override
     void determinaSolucao(double[] solucao){        
-        double Di, H, Vd, N, b, c, Dg, hg, h1, h2, h3, V1, V2, Vg, Ds;
+        double Di, H, Vd, b, c, Dg, hg, h1, h2, h3, V1, V2, Vg, Ds;
         
         Di = solucao[0];
         H = solucao[1];
         Vd = (Math.PI) * Di * Di * H / 4;
-        N = 3;
         
         b = pressaoMax; //altura ociosa
         c = 0.1; //Suficiente para colocar a roldana
@@ -135,7 +157,6 @@ public class Batelada extends Biodigestor{
         params[0].setValor(Di);
         params[1].setValor(H);
         params[2].setValor(Vd);
-        params[3].setValor(N);
         params[4].setValor(b);
         params[5].setValor(c);
         params[6].setValor(Dg);
