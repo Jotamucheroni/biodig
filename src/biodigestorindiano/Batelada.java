@@ -6,7 +6,9 @@ package biodigestorindiano;
  */
 public class Batelada extends Biodigestor{
     final int QTD_REST_MI = 5, QTD_REST_I = 0, QTD_PARAM = 16;
-    final double VB_PADRAO = 56.062, FREQ_PADRAO = 65, PRESS_PADRAO = 0.2, VUG_PADRAO = 5;
+    final double FREQ_PADRAO = 65, PRESS_PADRAO = 0.2, VUT_PADRAO = 10, B_PADRAO = 15, 
+                 PUF_PADRAO = 150, PEP_PADRAO = 105, ST_PADRAO = 85.5, STF_PADRAO = 8,
+                 RENDMTO_PADRAO = 0.15;
     final double P = (Math.PI) / 4;
     
     //Função principal a ser minimizada
@@ -59,44 +61,186 @@ public class Batelada extends Biodigestor{
         }
     }
     
-    public Batelada(){
-        inicializaFuncoes();
-        inicializaParametros();
-        this.Vb         = VB_PADRAO;
-        this.freq       = FREQ_PADRAO;
-        this.pressaoMax = PRESS_PADRAO;
-        this.Vug        = VUG_PADRAO;
-    }
+    protected double B, PBC, PUF, PEP, solidosTotais, solidosTotaisFinais, rendmto, Vut, N, A;
     
-    public Batelada(double B, double PBC, double pressaoMax, double Vug, double PUF, 
-                    double PEP, double solidosTotais, double solidosTotaisFinais, 
-                    double rendmto){
-        inicializaFuncoes();
-        inicializaParametros();
+    private void calculaValoresIniciais(){
+        double iniPEP = (PUF >= PEP) ? (PUF - PEP) : 0, CB, PBBio, PBB, Eu, Es, W;
+        int unProdEfet = 0, diasFerm = 0;
         
-        double iniPEP = (PUF >= PEP) ? (PUF - PEP) : 0, CB, PBBio, PBB, Eu, Es, W, A;
-        int N, unProdEfet = 0, diasFerm = 0;
         //Número de unidades na bateria (N):
         N = (int) Math.ceil( PUF / PBC);
+        
         for(int i = 0; i < N; i++)
         {
             if(diasFerm >= iniPEP && diasFerm <= PUF)
                 unProdEfet++;
             diasFerm += PBC;
         }
+        
         CB = B * PBC;
         PBBio = rendmto / PEP;
         PBB = PBBio * PBC * unProdEfet;
         Eu = CB / PBB;
         Es = Eu * (solidosTotais / 100);
         W = Es / (solidosTotaisFinais / 100);
-        setVb(W / 1000);
         A = W - Eu;
-        params[3].valor = N;
-        params[15].valor = A / 1000;
+        W /= 1000;
+        A /= 1000;
+        
+        setVb(W);
+        setVug(Vut / unProdEfet);
+    }
+    
+    public Batelada(){
+        inicializaFuncoes();
+        inicializaParametros();
+        
+        this.freq       = FREQ_PADRAO;
+        this.pressaoMax = PRESS_PADRAO;
+        
+        this.B                      = B_PADRAO;
+        this.PBC                    = FREQ_PADRAO;
+        this.PUF                    = PUF_PADRAO;
+        this.PEP                    = PEP_PADRAO;
+        this.solidosTotais          = ST_PADRAO;
+        this.solidosTotaisFinais    = STF_PADRAO;
+        this.rendmto                = RENDMTO_PADRAO;
+        this.Vut                    = VUT_PADRAO;
+        
+        calculaValoresIniciais();
+    }
+    
+    public Batelada(double B, double PBC, double pressaoMax, double Vut, double PUF, 
+                    double PEP, double solidosTotais, double solidosTotaisFinais, 
+                    double rendmto){
+        inicializaFuncoes();
+        inicializaParametros();
+        
         setFreq(PBC);
         setPressaoMax(pressaoMax);
-        setVug(Vug / unProdEfet);//setVug(Vug);
+        
+        detB(B);
+        detPBC(PBC);
+        detPUF(PUF);
+        detPEP(PEP);
+        detSolidosTotais(solidosTotais);
+        detSolidosTotaisFinais(solidosTotaisFinais);
+        detRendimento(rendmto);
+        detVut(Vut);
+        
+        calculaValoresIniciais();
+    }
+    
+    double getB(){
+        return B;
+    }
+    
+    double getPBC(){
+        return PBC;
+    }
+    
+    double getPUF(){
+        return PUF;
+    }
+    
+    double getPEP(){
+        return PEP;
+    }
+    
+    double getSolidosTotais(){
+        return solidosTotais;
+    }
+    
+    double getSolidosTotaisFinais(){
+        return solidosTotaisFinais;
+    }
+    
+    double getRendimento(){
+        return rendmto;
+    }
+    
+    double getVut(){
+        return Vut;
+    }
+    
+    double getN(){
+        return N;
+    }
+    
+    double getA(){
+        return A;
+    }
+    
+    final void detB(double B){
+        this.B = (B > 0) ? B : 1;
+    }
+    
+    final void detPBC(double PBC){
+        this.PBC = (PBC > 0) ? PBC : 1;
+    }
+    
+    final void detPUF(double PUF){
+        this.PUF = (PUF > 0) ? PUF : 1;
+    }
+    
+    final void detPEP(double PEP){
+        this.PEP = (PEP > 0) ? PEP : 1;
+    }
+    
+    final void detSolidosTotais(double solidosTotais){
+        this.solidosTotais = (solidosTotais > 0) ? solidosTotais : 1;
+    }
+    
+    final void detSolidosTotaisFinais(double solidosTotaisFinais){
+        this.solidosTotaisFinais = (solidosTotaisFinais > 0) ? solidosTotaisFinais : 1;
+    }
+    
+    final void detRendimento(double rendmto){
+        this.rendmto = (rendmto > 0) ? rendmto : 1;
+    }
+    
+    final void detVut(double Vut){
+        this.Vut = (Vut > 0) ? Vut : 1;
+    }
+    
+    void setB(double B){
+        detB(B);
+        calculaValoresIniciais();
+    }
+    
+    void setPBC(double PBC){
+        detPBC(PBC);
+        calculaValoresIniciais();
+    }
+    
+    void setPUF(double PUF){
+        detPUF(PUF);
+        calculaValoresIniciais();
+    }
+    
+    void setPEP(double PEP){
+        detPEP(PEP);
+        calculaValoresIniciais();
+    }
+    
+    void setSolidosTotais(double solidosTotais){
+        detSolidosTotais(solidosTotais);
+        calculaValoresIniciais();
+    }
+    
+    void setSolidosTotaisFinais(double solidosTotaisFinais){
+        detSolidosTotaisFinais(solidosTotaisFinais);
+        calculaValoresIniciais();
+    }
+    
+    void setRendimento(double rendmto){
+        detRendimento(rendmto);
+        calculaValoresIniciais();
+    }
+    
+    void setVut(double Vut){
+        detRendimento(Vut);
+        calculaValoresIniciais();
     }
     
     @Override
@@ -157,6 +301,7 @@ public class Batelada extends Biodigestor{
         params[0].setValor(Di);
         params[1].setValor(H);
         params[2].setValor(Vd);
+        params[3].setValor(N);
         params[4].setValor(b);
         params[5].setValor(c);
         params[6].setValor(Dg);
@@ -168,5 +313,6 @@ public class Batelada extends Biodigestor{
         params[12].setValor(V2);
         params[13].setValor(Vg);
         params[14].setValor(Ds);
+        params[15].setValor(A);
     }
 }
