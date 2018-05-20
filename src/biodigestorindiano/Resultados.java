@@ -8,6 +8,7 @@ public class Resultados extends javax.swing.JFrame {
     
     public final int numLabel = 21;
     public javax.swing.JLabel[] labelsResult, labelsRotulo;
+    public javax.swing.JLabel labelImagem;
     
     public final void inicializaLabels(){
         labelsResult = new javax.swing.JLabel[numLabel];
@@ -57,6 +58,8 @@ public class Resultados extends javax.swing.JFrame {
         labelsRotulo[18] = jLabel21;
         labelsRotulo[19] = jLabel22;
         labelsRotulo[20] = jLabel23;
+        
+        labelImagem = jLabel1;
     }
     
     /**
@@ -128,7 +131,7 @@ public class Resultados extends javax.swing.JFrame {
 
         jLabel3.setText("Diâmetro interno do biodigestor (Di):");
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/ImagemBiodigestor.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/indiano.png"))); // NOI18N
 
         jLabel4.setText("Altura do nível do substrato (H):");
 

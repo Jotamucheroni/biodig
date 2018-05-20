@@ -42,6 +42,22 @@ public abstract class Biodigestor {
     Funcao[] restMI, restI;
     protected double Vb, freq, pressaoMax, Vug;
     
+    public final void setVb(double Vb){
+        this.Vb = (Vb >= 0) ? Vb : 0;
+    }
+    
+    public final void setFreq(double freq){
+        this.freq = (freq >= 1) ? freq : 1;
+    }
+    
+    public final void setPressaoMax(double pressaoMax){
+        this.pressaoMax = (pressaoMax >= 0) ? pressaoMax : 0;
+    }
+    
+    public final void setVug(double Vug){
+        this.Vug = (Vug >= 0) ? Vug : 0;
+    }
+    
     double[] varIni, sIni, lambdaIni, piIni;
     
     public double[] getVarIni(){
@@ -63,20 +79,8 @@ public abstract class Biodigestor {
     Parametro[] params;
     String nomeImagem;
     
-    public final void setVb(double Vb){
-        this.Vb = (Vb >= 0) ? Vb : 0;
-    }
-    
-    public final void setFreq(double freq){
-        this.freq = (freq >= 1) ? freq : 1;
-    }
-    
-    public final void setPressaoMax(double pressaoMax){
-        this.pressaoMax = (pressaoMax >= 0) ? pressaoMax : 0;
-    }
-    
-    public final void setVug(double Vug){
-        this.Vug = (Vug >= 0) ? Vug : 0;
+    String getNomeImagem(){
+        return nomeImagem;
     }
     
     abstract void inicializaFuncoes();

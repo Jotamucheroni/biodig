@@ -156,5 +156,7 @@ public class Chines extends Biodigestor {
         params[14].setValor(Vc);
         params[15].setValor(Pmax);
         params[16].setValor(Vpmax);
+        
+        nomeImagem = "chines.png";
     }
 }

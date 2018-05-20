@@ -770,6 +770,7 @@ public class Dados extends javax.swing.JFrame {
                         resultados.labelsResult[i].setText("");
                     }
 
+                    resultados.labelImagem.setIcon( new javax.swing.ImageIcon(getClass().getResource("/imagens/" + biodig.getNomeImagem())) );
                     resultados.setVisible(true);
 
                 }

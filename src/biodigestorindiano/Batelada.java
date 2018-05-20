@@ -314,5 +314,7 @@ public class Batelada extends Biodigestor{
         params[13].setValor(Vg);
         params[14].setValor(Ds);
         params[15].setValor(A);
+        
+        nomeImagem = "batelada.png";
     }
 }

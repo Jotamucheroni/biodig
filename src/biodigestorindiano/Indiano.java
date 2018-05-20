@@ -172,5 +172,7 @@ public class Indiano extends Biodigestor {
         params[18].setValor(a);
         params[19].setValor(v);
         params[20].setValor(e2);
+        
+        nomeImagem = "indiano.png";
     }
 }
