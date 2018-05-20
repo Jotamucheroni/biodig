@@ -6,8 +6,9 @@ package biodigestorindiano;
  */
 public class Dados extends javax.swing.JFrame {
 
-    final int numTextField = 6, numEntBatelada = 5, BATELADA = 2;
+    final int numTextField = 6, numEntBatelada = 5, INDIANO = 0, CHINES = 1, BATELADA = 2;
     javax.swing.JTextField[] entradas, entBatelada;
+    javax.swing.JTextField picoConsumo;
     javax.swing.JLabel[] lbBatelada;
     /**
      * Creates new form Principal
@@ -26,6 +27,7 @@ public class Dados extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -62,6 +64,9 @@ public class Dados extends javax.swing.JFrame {
         jTextField6 = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         jTextField7 = new javax.swing.JTextField();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jTextField8 = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -207,6 +212,16 @@ public class Dados extends javax.swing.JFrame {
 
         jLabel10.setText("Rendimento [m³/kg]:");
 
+        jRadioButton1.setText("Informar horários:");
+        jRadioButton1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jRadioButton1ItemStateChanged(evt);
+            }
+        });
+
+        jRadioButton2.setText("Informar pico de consumo [m³]:");
+        jRadioButton2.setToolTipText("");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -271,7 +286,15 @@ public class Dados extends javax.swing.JFrame {
                                         .addGap(18, 18, 18)
                                         .addComponent(jButton2)
                                         .addGap(18, 18, 18)
-                                        .addComponent(jButton4)))
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jRadioButton2)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jTextField8))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jRadioButton1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jButton4)))))
                                 .addGap(12, 12, 12)))
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(38, 38, 38))
@@ -333,9 +356,14 @@ public class Dados extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton1)
                             .addComponent(jButton2)
-                            .addComponent(jButton4))
+                            .addComponent(jButton4)
+                            .addComponent(jRadioButton1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton3)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jRadioButton2)
+                                .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 23, Short.MAX_VALUE))))
         );
 
@@ -408,6 +436,12 @@ public class Dados extends javax.swing.JFrame {
         
         jLabel1.setVisible(true);
         jComboBox1.setVisible(true);
+        
+        picoConsumo = jTextField8;
+        
+        buttonGroup1.add(jRadioButton1);
+        buttonGroup1.add(jRadioButton2);
+        jRadioButton1.setSelected(true);
     }
     
     private void entradasTeste(){
@@ -430,6 +464,9 @@ public class Dados extends javax.swing.JFrame {
             entBatelada[2].setText("85.5");
             entBatelada[3].setText("8");
             entBatelada[4].setText("0.15");
+            
+            jRadioButton2.setSelected(true);
+            picoConsumo.setText("10");
         }
         else
         {
@@ -526,9 +563,10 @@ public class Dados extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         double[] valores = new double[numTextField], valBatelada = new double[numEntBatelada]; //valBatelada - PUF e PEP - Batelada
+        double valPicoConsumo = 0;
         boolean test = true;
-        int opcao = jComboBox2.getSelectedIndex();
-
+        int opcaoBio = jComboBox2.getSelectedIndex(), opcaoPico = jRadioButton1.isSelected() ? 0 : 1;
+        final short PICO_CONSUMO = 1; 
         //Leitura das caixas de texto padrão
         for(int i = 0; i < numTextField && test; i++){
             try {
@@ -560,7 +598,7 @@ public class Dados extends javax.swing.JFrame {
         }
 
         //Leitura das caixas de texto exclusivas do modelo Batelada
-        if(opcao == 2 && test)
+        if(opcaoBio == BATELADA && test)
         {
             for(int i = 0; i < numEntBatelada && test; i++){
                 try {
@@ -620,6 +658,29 @@ public class Dados extends javax.swing.JFrame {
                 test = false;
             }
         }
+        
+        //Leitura pico de consumo
+        if( opcaoPico == PICO_CONSUMO )
+            try {
+                if(picoConsumo.getText().isEmpty())
+                {
+                    valPicoConsumo = 0;
+                    picoConsumo.setText("0");
+                }
+                else
+                {
+                    valPicoConsumo = Double.parseDouble(picoConsumo.getText());
+
+                    if(valPicoConsumo < 0)
+                    {
+                        test = false;
+                        picoConsumo.requestFocus();
+                    }
+                }
+            } catch (NumberFormatException e) {
+                test = false;
+                picoConsumo.requestFocus();
+            }
 
         //Se as entradas estão corretas, calcular o consumo diário de biogás
         if(test){
@@ -639,103 +700,106 @@ public class Dados extends javax.swing.JFrame {
 
             //Se houver consumo, calcular as dimensões
             if(B != 0){
-                double K, Vb;
+                double K, Vb, V2;
                 double[] vetK = new double[] {3, 1.5, 4.5, 6, 2.5}; //suíno, galinhas poedeiras, gado de corte, gado leiteiro, exemplo
 
                 K = vetK[jComboBox1.getSelectedIndex()];
                 Vb = K * B;
+                
+                if( opcaoPico == PICO_CONSUMO  || tabelaHorarios != null){
+                    //Se a tabela de horários foi preenchida, calcula volume útil do gasômetro
+                    if( opcaoPico == PICO_CONSUMO )
+                        V2 = valPicoConsumo;
+                    else{
+                        int qtdCozimento, qtdMotor, qtdIluminacao, qtdBanho;
+                        double producaoHoraria, taxaCozimento, taxaMotor, taxaIluminacao, taxaBanho;
 
-                //Se a tabela de horários foi preenchida, calcula volume útil do gasômetro
-                if(tabelaHorarios != null){
-                    int qtdCozimento, qtdMotor, qtdIluminacao, qtdBanho;
-                    double producaoHoraria, taxaCozimento, taxaMotor, taxaIluminacao, taxaBanho, V2;
+                        producaoHoraria = B / 24;
 
-                    producaoHoraria = B / 24;
+                        qtdCozimento = 0;
+                        qtdMotor = 0;
+                        qtdIluminacao = 0;
+                        qtdBanho = 0;
 
-                    qtdCozimento = 0;
-                    qtdMotor = 0;
-                    qtdIluminacao = 0;
-                    qtdBanho = 0;
+                        for (int[] tabelaHorario : tabelaHorarios) {
+                            qtdCozimento += tabelaHorario[5];
+                            qtdMotor += tabelaHorario[2];
+                            qtdBanho += tabelaHorario[3];
+                            qtdIluminacao += tabelaHorario[4];
+                        }
 
-                    for (int[] tabelaHorario : tabelaHorarios) {
-                        qtdCozimento += tabelaHorario[5];
-                        qtdMotor += tabelaHorario[2];
-                        qtdBanho += tabelaHorario[3];
-                        qtdIluminacao += tabelaHorario[4];
-                    }
-
-                    if(qtdCozimento != 0)
-                        taxaCozimento = cozimentoTotal / qtdCozimento;
-                    else
-                        taxaCozimento = 0;
-                    if(qtdMotor != 0)
-                        taxaMotor = motorTotal / qtdMotor;
-                    else
-                        taxaMotor = 0;
-                    if(qtdIluminacao != 0)
-                        taxaIluminacao = iluminacaoTotal / qtdIluminacao;
-                    else
-                        taxaIluminacao = 0;
-                    if(qtdBanho != 0)
-                        taxaBanho = banhoTotal / qtdBanho;
-                    else
-                        taxaBanho = 0;
-
-                    final short INTERVALO = 0, ACUMULADO = 1, PRODUCAO = 2, CONSUMO = 3, TOTAL = 4;
-                    double[][] quadroProducao = new double[tabelaHorarios.length][5];
-                    /*
-                    A: Volume que deve estar armazenado no início de cada período
-                    Z: Volume que deverá ser armazendado no fim do período
-                    */
-                    double maiorA = 0, maiorZ = 0;
-
-                    for(int i = 0; i < tabelaHorarios.length; i++){
-                        if(tabelaHorarios[i][0] > tabelaHorarios[i][1])
-                            quadroProducao[i][INTERVALO] = tabelaHorarios[i][1] + (24 - tabelaHorarios[i][0]);
+                        if(qtdCozimento != 0)
+                            taxaCozimento = cozimentoTotal / qtdCozimento;
                         else
-                            quadroProducao[i][INTERVALO] = tabelaHorarios[i][1] - tabelaHorarios[i][0];
+                            taxaCozimento = 0;
+                        if(qtdMotor != 0)
+                            taxaMotor = motorTotal / qtdMotor;
+                        else
+                            taxaMotor = 0;
+                        if(qtdIluminacao != 0)
+                            taxaIluminacao = iluminacaoTotal / qtdIluminacao;
+                        else
+                            taxaIluminacao = 0;
+                        if(qtdBanho != 0)
+                            taxaBanho = banhoTotal / qtdBanho;
+                        else
+                            taxaBanho = 0;
 
-                        quadroProducao[i][PRODUCAO] = producaoHoraria * quadroProducao[i][0];
-                        quadroProducao[i][CONSUMO]  = taxaCozimento * tabelaHorarios[i][5] +
-                        taxaMotor * tabelaHorarios[i][2] +
-                        taxaIluminacao * tabelaHorarios[i][4] +
-                        taxaBanho * tabelaHorarios[i][3];
+                        final short INTERVALO = 0, ACUMULADO = 1, PRODUCAO = 2, CONSUMO = 3, TOTAL = 4;
+                        double[][] quadroProducao = new double[tabelaHorarios.length][5];
+                        /*
+                        A: Volume que deve estar armazenado no início de cada período
+                        Z: Volume que deverá ser armazendado no fim do período
+                        */
+                        double maiorA = 0, maiorZ = 0;
 
-                        if(quadroProducao[i][CONSUMO] - quadroProducao[i][PRODUCAO] > maiorA)
-                            maiorA = quadroProducao[i][CONSUMO] - quadroProducao[i][PRODUCAO];
+                        for(int i = 0; i < tabelaHorarios.length; i++){
+                            if(tabelaHorarios[i][0] > tabelaHorarios[i][1])
+                                quadroProducao[i][INTERVALO] = tabelaHorarios[i][1] + (24 - tabelaHorarios[i][0]);
+                            else
+                                quadroProducao[i][INTERVALO] = tabelaHorarios[i][1] - tabelaHorarios[i][0];
 
-                        if(quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO] > maiorZ)
-                            maiorZ = quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO];
+                            quadroProducao[i][PRODUCAO] = producaoHoraria * quadroProducao[i][0];
+                            quadroProducao[i][CONSUMO]  = taxaCozimento * tabelaHorarios[i][5] +
+                            taxaMotor * tabelaHorarios[i][2] +
+                            taxaIluminacao * tabelaHorarios[i][4] +
+                            taxaBanho * tabelaHorarios[i][3];
+
+                            if(quadroProducao[i][CONSUMO] - quadroProducao[i][PRODUCAO] > maiorA)
+                                maiorA = quadroProducao[i][CONSUMO] - quadroProducao[i][PRODUCAO];
+
+                            if(quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO] > maiorZ)
+                                maiorZ = quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO];
+                        }
+
+                        double maiorVolume = (maiorA >= maiorZ) ? maiorA : maiorZ, menorTotal = B + 1;
+
+                        quadroProducao[0][ACUMULADO] = 0;
+                        quadroProducao[0][TOTAL] = quadroProducao[0][PRODUCAO] - quadroProducao[0][CONSUMO];
+
+                        for(int i = 1; i < tabelaHorarios.length; i++){
+                            quadroProducao[i][ACUMULADO] = (quadroProducao[i - 1][TOTAL] < maiorVolume) ? quadroProducao[i - 1][TOTAL] : maiorVolume;
+                            quadroProducao[i][TOTAL] = quadroProducao[i][ACUMULADO] + quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO];
+                            if( quadroProducao[i][TOTAL] < menorTotal)
+                                menorTotal = quadroProducao[i][TOTAL];
+                        }
+
+                        V2 = maiorVolume;
+                        if(menorTotal < 0)
+                            V2 -= menorTotal;
                     }
-
-                    double maiorVolume = (maiorA >= maiorZ) ? maiorA : maiorZ, menorTotal = B + 1;
-
-                    quadroProducao[0][ACUMULADO] = 0;
-                    quadroProducao[0][TOTAL] = quadroProducao[0][PRODUCAO] - quadroProducao[0][CONSUMO];
-
-                    for(int i = 1; i < tabelaHorarios.length; i++){
-                        quadroProducao[i][ACUMULADO] = (quadroProducao[i - 1][TOTAL] < maiorVolume) ? quadroProducao[i - 1][TOTAL] : maiorVolume;
-                        quadroProducao[i][TOTAL] = quadroProducao[i][ACUMULADO] + quadroProducao[i][PRODUCAO] - quadroProducao[i][CONSUMO];
-                        if( quadroProducao[i][TOTAL] < menorTotal)
-                            menorTotal = quadroProducao[i][TOTAL];
-                    }
-
-                    V2 = maiorVolume;
-                    if(menorTotal < 0)
-                        V2 -= menorTotal;
-
-                    //Calcula Di e H
+                        //Calcula Di e H
                     Biodigestor biodig;
 
-                    switch( opcao )
+                    switch( opcaoBio )
                     {
-                        case 0:
+                        case INDIANO:
                             biodig = new Indiano(Vb, valores[0], valores[5], V2);
                         break;
-                        case 1:
+                        case CHINES:
                             biodig = new Chines(Vb, valores[0], valores[5], V2);
                         break;
-                        case 2:
+                        case BATELADA:
                             biodig = new Batelada(B, valores[0], valores[5], V2, valBatelada[0],
                                                   valBatelada[1], valBatelada[2], valBatelada[3],
                                                   valBatelada[4]);
@@ -771,19 +835,25 @@ public class Dados extends javax.swing.JFrame {
                     }
 
                     resultados.labelImagem.setIcon( new javax.swing.ImageIcon(getClass().getResource("/imagens/" + biodig.getNomeImagem())) );
-                    resultados.setVisible(true);
-
+                    resultados.setVisible(true);     
                 }
                 else
-                    javax.swing.JOptionPane.showMessageDialog(null, "Por favor, preencha também os horários das tarefas que utilizam biogás.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
+                    javax.swing.JOptionPane.showMessageDialog(null, "Por favor, preencha também os horários das tarefas que utilizam biogás ou informe o pico de consumo.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
             }
             else
                 javax.swing.JOptionPane.showMessageDialog(null, "Deve haver consumo de biogás para que as dimensões do biodigestor sejam calculadas.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
         }
         else
-            javax.swing.JOptionPane.showMessageDialog(null, "Use apenas números não negativos para preencher os dados e use ponto para separar as casas decimais. \nA frequência de retirada dos resíduos e os dados de PUF e PEP (Batelada) também não podem ser iguais a zero.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(null, "Use apenas números não negativos para preencher os dados e use ponto para separar as casas decimais. \nA frequência de retirada dos resíduos e os dados de PUF, PEP, sólidos totais, sólidos totais finais e\nrendimento (Batelada) também não podem ser iguais a zero.","Erro de entrada de dados.",javax.swing.JOptionPane.ERROR_MESSAGE);
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jRadioButton1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRadioButton1ItemStateChanged
+        boolean selecionado = jRadioButton1.isSelected();
+        
+        jButton4.setEnabled(selecionado);
+        picoConsumo.setEnabled(!selecionado);
+    }//GEN-LAST:event_jRadioButton1ItemStateChanged
     
     /**
      * @param args the command line arguments
@@ -819,6 +889,7 @@ public class Dados extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -845,6 +916,8 @@ public class Dados extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTable jTable1;
@@ -859,5 +932,6 @@ public class Dados extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
+    private javax.swing.JTextField jTextField8;
     // End of variables declaration//GEN-END:variables
 }

@@ -200,7 +200,7 @@ public class Batelada extends Biodigestor{
     }
     
     final void detVut(double Vut){
-        this.Vut = (Vut > 0) ? Vut : 1;
+        this.Vut = (Vut >= 0) ? Vut : 0;
     }
     
     void setB(double B){
