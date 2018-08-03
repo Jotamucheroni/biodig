@@ -13,7 +13,6 @@ public class Chines extends Biodigestor {
     //Função principal a ser minimizada
     class FuncaoObjetivo implements Funcao{
         
-        
         @Override
         public double f(double[] x){
             return P1 * x[0] * x[0] * x[1] + P2 * x[0] * x[0] * x[0];

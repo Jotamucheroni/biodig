@@ -558,7 +558,8 @@ public class Dados extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        System.exit(0);
+        //System.exit(0);
+        Modelo3D.iniciar();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -884,8 +885,7 @@ public class Dados extends javax.swing.JFrame {
         //</editor-fold>
         
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater( () -> new Dados().setVisible(true) );
-        
+       java.awt.EventQueue.invokeLater( () -> new Dados().setVisible(true) );
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
