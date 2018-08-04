@@ -89,6 +89,23 @@ public class Modelo3D extends JPanel{
         tampa4.SetOrigin(0, 2.4, 0);
         tampa4.SetNormal(0, 1, 0);
         
+        //Gasômetro
+        vtkCylinder cilindro5 = new vtkCylinder();
+        cilindro5.SetCenter(0, 0, 0);
+        cilindro5.SetRadius(1.15); //1.1
+        
+        vtkCylinder cilindro6 = new vtkCylinder();
+        cilindro6.SetCenter(0, 0, 0);
+        cilindro6.SetRadius(1.0); //1.05
+        
+        vtkPlane tampa5 = new vtkPlane();
+        tampa5.SetOrigin(0, 2.5, 0);
+        tampa5.SetNormal(0, 1, 0);
+        
+        vtkPlane tampa6 = new vtkPlane();
+        tampa6.SetOrigin(0, 2.45, 0);
+        tampa6.SetNormal(0, 1, 0);
+        
         //----------------------------------------------------------------------
         
         //Operações-------------------------------------------------------------
@@ -140,6 +157,29 @@ public class Modelo3D extends JPanel{
         corteRevGasCilindro.AddFunction(oCilindro2);
         corteRevGasCilindro.AddFunction(corte);
         
+        //Gasômetro
+        vtkImplicitBoolean extCilindro3 = new vtkImplicitBoolean();
+        extCilindro3.SetOperationTypeToIntersection();
+        extCilindro3.AddFunction(cilindro5);
+        extCilindro3.AddFunction(tampa5);
+        extCilindro3.AddFunction(base4);
+        
+        vtkImplicitBoolean intCilindro3 = new vtkImplicitBoolean();
+        intCilindro3.SetOperationTypeToIntersection();
+        intCilindro3.AddFunction(cilindro6);
+        intCilindro3.AddFunction(tampa6);
+        intCilindro3.AddFunction(base4);
+        
+        vtkImplicitBoolean oCilindro3 = new vtkImplicitBoolean();
+        oCilindro3.SetOperationTypeToDifference();
+        oCilindro3.AddFunction(extCilindro3);
+        oCilindro3.AddFunction(intCilindro3);
+        
+        vtkImplicitBoolean corteGasCilindro = new vtkImplicitBoolean();
+        corteGasCilindro.SetOperationTypeToIntersection();
+        corteGasCilindro.AddFunction(oCilindro3);
+        corteGasCilindro.AddFunction(corte);
+        
         //----------------------------------------------------------------------
         
         //Amostra---------------------------------------------------------------
@@ -158,6 +198,13 @@ public class Modelo3D extends JPanel{
         theRevGasCilindroSample.SetSampleDimensions(100, 100, 100);
         theRevGasCilindroSample.ComputeNormalsOff();
         
+        //Gasômetro
+        vtkSampleFunction theGasCilindroSample = new vtkSampleFunction();
+        theGasCilindroSample.SetImplicitFunction(oCilindro3);
+        theGasCilindroSample.SetModelBounds(-2.3, 2.8, -2.6, 2.6, -2.6, 2.6);
+        theGasCilindroSample.SetSampleDimensions(100, 100, 100);
+        theGasCilindroSample.ComputeNormalsOff();
+        
         //----------------------------------------------------------------------
         
         //Contorno--------------------------------------------------------------
@@ -172,6 +219,11 @@ public class Modelo3D extends JPanel{
         theRevGasCilindroSurface.SetInputConnection(theRevGasCilindroSample.GetOutputPort());
         theRevGasCilindroSurface.SetValue(0, 0.0);
         
+        //Gasômetro
+        vtkContourFilter theGasCilindroSurface = new vtkContourFilter();
+        theGasCilindroSurface.SetInputConnection(theGasCilindroSample.GetOutputPort());
+        theGasCilindroSurface.SetValue(0, 0.0);
+        
         //----------------------------------------------------------------------
         
         //Polígonos-------------------------------------------------------------
@@ -185,6 +237,11 @@ public class Modelo3D extends JPanel{
         vtkPolyDataMapper revGasCilindroMapper = new vtkPolyDataMapper();
         revGasCilindroMapper.SetInputConnection(theRevGasCilindroSurface.GetOutputPort());
         revGasCilindroMapper.ScalarVisibilityOff();
+        
+        //Gasômetro
+        vtkPolyDataMapper gasCilindroMapper = new vtkPolyDataMapper();
+        gasCilindroMapper.SetInputConnection(theGasCilindroSurface.GetOutputPort());
+        gasCilindroMapper.ScalarVisibilityOff();
         
         //----------------------------------------------------------------------
         
@@ -202,17 +259,25 @@ public class Modelo3D extends JPanel{
         revGasCilindroActor.SetMapper(revGasCilindroMapper);
         revGasCilindroActor.GetProperty().SetColor(cor);
         
+        //Gasômetro
+        vtkActor gasCilindroActor = new vtkActor();
+        gasCilindroActor.SetMapper(gasCilindroMapper);
+        new vtkNamedColors().GetColorRGB("Gray", cor);
+        gasCilindroActor.GetProperty().SetColor(cor);
+        
         //----------------------------------------------------------------------
         
         renWin = new vtkPanel();
         renWin.GetRenderer().AddActor(cilindroActor);
         renWin.GetRenderer().AddActor(revGasCilindroActor);
+        renWin.GetRenderer().AddActor(gasCilindroActor);
         
         // Add Java UI components
         exitButton = new JButton("Corte");
         exitButton.addActionListener( (e) -> {
             vtkImplicitFunction f = cortado ? oCilindro : corteCilindro,
-                                g = cortado ? oCilindro2 : corteRevGasCilindro;
+                                g = cortado ? oCilindro2 : corteRevGasCilindro,
+                                h = cortado ? oCilindro3 : corteGasCilindro;
             
             //Biomassa
             theCilindroSample.SetImplicitFunction(f);
@@ -225,6 +290,12 @@ public class Modelo3D extends JPanel{
             theRevGasCilindroSurface.SetInputConnection(theRevGasCilindroSample.GetOutputPort());
             revGasCilindroMapper.SetInputConnection(theRevGasCilindroSurface.GetOutputPort());
             revGasCilindroActor.SetMapper(revGasCilindroMapper);
+            
+            //Gasômetro
+            theGasCilindroSample.SetImplicitFunction(h);
+            theGasCilindroSurface.SetInputConnection(theGasCilindroSample.GetOutputPort());
+            gasCilindroMapper.SetInputConnection(theGasCilindroSurface.GetOutputPort());
+            gasCilindroActor.SetMapper(gasCilindroMapper);
             
             cortado = !cortado;
             renWin.repaint();
