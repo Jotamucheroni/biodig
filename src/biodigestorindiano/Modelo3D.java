@@ -29,6 +29,66 @@ public class Modelo3D extends JPanel{
     private final JButton exitButton;
     private boolean cortado = false;
  
+    private vtkImplicitFunction geraCilindro(double[] centro, double[] eixo, double raio,
+                                             double altura, double espParede, double espFundo,
+                                             double espTopo)
+    {
+        //Cilindro externo
+        vtkCylinder corpoCilindroExterno = new vtkCylinder();
+        corpoCilindroExterno.SetCenter(centro);
+        corpoCilindroExterno.SetAxis(eixo);
+        corpoCilindroExterno.SetRadius(raio);
+        
+        vtkPlane tampaCilindroExterno = new vtkPlane(),
+                 baseCilindroExterno = new vtkPlane();
+        tampaCilindroExterno.SetNormal(eixo);
+        baseCilindroExterno.SetNormal(-eixo[0], -eixo[1], -eixo[2]);
+        double altura2 = altura/2;
+        tampaCilindroExterno.SetOrigin(centro[0] + eixo[0] * altura2,
+                                       centro[1] + eixo[1] * altura2,
+                                       centro[2] + eixo[2] * altura2);
+        baseCilindroExterno.SetOrigin(centro[0] - eixo[0] * altura2,
+                                      centro[1] - eixo[1] * altura2,
+                                      centro[2] - eixo[2] * altura2);
+        
+        vtkImplicitBoolean extCilindro = new vtkImplicitBoolean();
+        extCilindro.SetOperationTypeToIntersection();
+        extCilindro.AddFunction(corpoCilindroExterno);
+        extCilindro.AddFunction(tampaCilindroExterno);
+        extCilindro.AddFunction(baseCilindroExterno);
+        
+        //Cilindro interno
+        vtkCylinder corpoCilindroInterno = new vtkCylinder();
+        corpoCilindroInterno.SetCenter(centro);
+        corpoCilindroInterno.SetAxis(eixo);
+        corpoCilindroInterno.SetRadius(raio - espParede);
+        
+        vtkPlane tampaCilindroInterno = new vtkPlane(),
+                 baseCilindroInterno = new vtkPlane();
+        tampaCilindroInterno.SetNormal(eixo);
+        baseCilindroInterno.SetNormal(-eixo[0], -eixo[1], -eixo[2]);
+        tampaCilindroInterno.SetOrigin(centro[0] + eixo[0] * altura2 - espTopo,
+                                       centro[1] + eixo[1] * altura2 - espTopo,
+                                       centro[2] + eixo[2] * altura2 - espTopo);
+        baseCilindroInterno.SetOrigin(centro[0] - eixo[0] * altura2 + espFundo,
+                                      centro[1] - eixo[1] * altura2 + espFundo,
+                                      centro[2] - eixo[2] * altura2 + espFundo);
+        
+        vtkImplicitBoolean intCilindro = new vtkImplicitBoolean();
+        intCilindro.SetOperationTypeToIntersection();
+        intCilindro.AddFunction(corpoCilindroInterno);
+        intCilindro.AddFunction(tampaCilindroInterno);
+        intCilindro.AddFunction(baseCilindroInterno);
+        
+        //Cilindro final
+        vtkImplicitBoolean oCilindro = new vtkImplicitBoolean();
+        oCilindro.SetOperationTypeToDifference();
+        oCilindro.AddFunction(extCilindro);
+        oCilindro.AddFunction(intCilindro);
+        
+        return oCilindro;
+    }
+    
     // -----------------------------------------------------------------
     public Modelo3D() {
         super(new BorderLayout());
@@ -36,148 +96,69 @@ public class Modelo3D extends JPanel{
         //Funções---------------------------------------------------------------
         
         //Biomassa
-        vtkCylinder cilindro = new vtkCylinder();
-        cilindro.SetCenter(0, 0, 0);
-        cilindro.SetRadius(1);
+        vtkImplicitFunction cilindroBiomassa = geraCilindro(new double[]{0, 0, 0}, new double[]{0, 1, 0},
+                                              1, 2.4, 0.1, 0.2, 0);
         
-        vtkCylinder cilindro2 = new vtkCylinder();
-        cilindro2.SetCenter(0, 0, 0);
-        cilindro2.SetRadius(0.9);
         
-        vtkPlane base = new vtkPlane();
-        base.SetOrigin(0, -1.2, 0);
-        base.SetNormal(0, -1, 0);
+        vtkCylinder cilindroAux = new vtkCylinder();
+        cilindroAux.SetCenter(0, 0, 0);
+        cilindroAux.SetRadius(0.9);
         
-        vtkPlane base2 = new vtkPlane();
-        base2.SetOrigin(0, -1, 0);
-        base2.SetNormal(0, -1, 0);
+        vtkPlane baseAux = new vtkPlane();
+        baseAux.SetOrigin(0, -1, 0);
+        baseAux.SetNormal(0, -1, 0);
         
-        vtkPlane tampa = new vtkPlane();
-        tampa.SetOrigin(0, 1.2, 0);
-        tampa.SetNormal(0, 1, 0);
-        
-        vtkPlane tampa2 = new vtkPlane();
-        tampa2.SetOrigin(0, 1.2 + 0.2, 0);
-        tampa2.SetNormal(0, 1, 0);
+        vtkPlane tampaAux = new vtkPlane();
+        tampaAux.SetOrigin(0, 1.2 + 0.2, 0);
+        tampaAux.SetNormal(0, 1, 0);
         
         vtkPlane corte = new vtkPlane();
         corte.SetOrigin(0, 0, 0);
         corte.SetNormal(0, 0, 1);
         
         //Revestimento Gasômetro
-        vtkCylinder cilindro3 = new vtkCylinder();
-        cilindro3.SetCenter(0, 0, 0);
-        cilindro3.SetRadius(1.3);
-        
-        vtkCylinder cilindro4 = new vtkCylinder();
-        cilindro4.SetCenter(0, 0, 0);
-        cilindro4.SetRadius(1.2);
-        
-        vtkPlane base3 = new vtkPlane();
-        base3.SetOrigin(0, 1.2, 0);
-        base3.SetNormal(0, -1, 0);
-        
-        vtkPlane base4 = new vtkPlane();
-        base4.SetOrigin(0, 1.3, 0);
-        base4.SetNormal(0, -1, 0);
-        
-        vtkPlane tampa3 = new vtkPlane();
-        tampa3.SetOrigin(0, 2.4, 0);
-        tampa3.SetNormal(0, 1, 0);
-        
-        vtkPlane tampa4 = new vtkPlane();
-        tampa4.SetOrigin(0, 2.4, 0);
-        tampa4.SetNormal(0, 1, 0);
+        vtkImplicitFunction cilindroRevGasometro = geraCilindro(new double[]{0, 1.8, 0}, 
+                                                                new double[]{0, 1, 0},
+                                                                1.3, 1.2, 0.1, 0.1, 0);
         
         //Gasômetro
-        vtkCylinder cilindro5 = new vtkCylinder();
-        cilindro5.SetCenter(0, 0, 0);
-        cilindro5.SetRadius(1.15); //1.1
-        
-        vtkCylinder cilindro6 = new vtkCylinder();
-        cilindro6.SetCenter(0, 0, 0);
-        cilindro6.SetRadius(1.0); //1.05
-        
-        vtkPlane tampa5 = new vtkPlane();
-        tampa5.SetOrigin(0, 2.5, 0);
-        tampa5.SetNormal(0, 1, 0);
-        
-        vtkPlane tampa6 = new vtkPlane();
-        tampa6.SetOrigin(0, 2.45, 0);
-        tampa6.SetNormal(0, 1, 0);
+        vtkImplicitFunction cilindroGasometro = geraCilindro(new double[]{0, 1.9, 0}, 
+                                                             new double[]{0, 1, 0},
+                                                             1.15, 1.2, 0.15, 0, 0.05);
         
         //----------------------------------------------------------------------
         
         //Operações-------------------------------------------------------------
         
         //Biomassa
-        vtkImplicitBoolean extCilindro = new vtkImplicitBoolean();
-        extCilindro.SetOperationTypeToIntersection();
-        extCilindro.AddFunction(cilindro);
-        extCilindro.AddFunction(base);
-        extCilindro.AddFunction(tampa);
         
         vtkImplicitBoolean intCilindro = new vtkImplicitBoolean();
         intCilindro.SetOperationTypeToIntersection();
-        intCilindro.AddFunction(cilindro2);
-        intCilindro.AddFunction(base2);
-        intCilindro.AddFunction(tampa2);
-        
-        vtkImplicitBoolean oCilindro = new vtkImplicitBoolean();
-        oCilindro.SetOperationTypeToDifference();
-        oCilindro.AddFunction(extCilindro);
-        oCilindro.AddFunction(intCilindro);
+        intCilindro.AddFunction(cilindroAux);
+        intCilindro.AddFunction(baseAux);
+        intCilindro.AddFunction(tampaAux);
         
         vtkImplicitBoolean corteCilindro = new vtkImplicitBoolean();
         corteCilindro.SetOperationTypeToIntersection();
-        corteCilindro.AddFunction(oCilindro);
+        corteCilindro.AddFunction(cilindroBiomassa);
         corteCilindro.AddFunction(corte);
         
         //Revestimento Gasômetro
-        vtkImplicitBoolean extCilindro2 = new vtkImplicitBoolean();
-        extCilindro2.SetOperationTypeToIntersection();
-        extCilindro2.AddFunction(cilindro3);
-        extCilindro2.AddFunction(base3);
-        extCilindro2.AddFunction(tampa3);
-        
-        vtkImplicitBoolean intCilindro2 = new vtkImplicitBoolean();
-        intCilindro2.SetOperationTypeToIntersection();
-        intCilindro2.AddFunction(cilindro4);
-        intCilindro2.AddFunction(base4);
-        intCilindro2.AddFunction(tampa4);
         
         vtkImplicitBoolean oCilindro2 = new vtkImplicitBoolean();
         oCilindro2.SetOperationTypeToDifference();
-        oCilindro2.AddFunction(extCilindro2);
+        oCilindro2.AddFunction(cilindroRevGasometro);
         oCilindro2.AddFunction(intCilindro);
-        oCilindro2.AddFunction(intCilindro2);
         
         vtkImplicitBoolean corteRevGasCilindro = new vtkImplicitBoolean();
         corteRevGasCilindro.SetOperationTypeToIntersection();
         corteRevGasCilindro.AddFunction(oCilindro2);
         corteRevGasCilindro.AddFunction(corte);
         
-        //Gasômetro
-        vtkImplicitBoolean extCilindro3 = new vtkImplicitBoolean();
-        extCilindro3.SetOperationTypeToIntersection();
-        extCilindro3.AddFunction(cilindro5);
-        extCilindro3.AddFunction(tampa5);
-        extCilindro3.AddFunction(base4);
-        
-        vtkImplicitBoolean intCilindro3 = new vtkImplicitBoolean();
-        intCilindro3.SetOperationTypeToIntersection();
-        intCilindro3.AddFunction(cilindro6);
-        intCilindro3.AddFunction(tampa6);
-        intCilindro3.AddFunction(base4);
-        
-        vtkImplicitBoolean oCilindro3 = new vtkImplicitBoolean();
-        oCilindro3.SetOperationTypeToDifference();
-        oCilindro3.AddFunction(extCilindro3);
-        oCilindro3.AddFunction(intCilindro3);
-        
+        //Gasômetro     
         vtkImplicitBoolean corteGasCilindro = new vtkImplicitBoolean();
         corteGasCilindro.SetOperationTypeToIntersection();
-        corteGasCilindro.AddFunction(oCilindro3);
+        corteGasCilindro.AddFunction(cilindroGasometro);//oCilindro3);
         corteGasCilindro.AddFunction(corte);
         
         //----------------------------------------------------------------------
@@ -186,7 +167,7 @@ public class Modelo3D extends JPanel{
         
         //Biomassa
         vtkSampleFunction theCilindroSample = new vtkSampleFunction();
-        theCilindroSample.SetImplicitFunction(oCilindro);
+        theCilindroSample.SetImplicitFunction(cilindroBiomassa);
         theCilindroSample.SetModelBounds(-1, 1.5, -1.25, 1.25, -1.25, 1.25);
         theCilindroSample.SetSampleDimensions(100, 100, 100);
         theCilindroSample.ComputeNormalsOff();
@@ -200,7 +181,7 @@ public class Modelo3D extends JPanel{
         
         //Gasômetro
         vtkSampleFunction theGasCilindroSample = new vtkSampleFunction();
-        theGasCilindroSample.SetImplicitFunction(oCilindro3);
+        theGasCilindroSample.SetImplicitFunction(cilindroGasometro); //oCilindro3);
         theGasCilindroSample.SetModelBounds(-2.3, 2.8, -2.6, 2.6, -2.6, 2.6);
         theGasCilindroSample.SetSampleDimensions(100, 100, 100);
         theGasCilindroSample.ComputeNormalsOff();
@@ -274,10 +255,10 @@ public class Modelo3D extends JPanel{
         
         // Add Java UI components
         exitButton = new JButton("Corte");
-        exitButton.addActionListener( (e) -> {
-            vtkImplicitFunction f = cortado ? oCilindro : corteCilindro,
+        exitButton.addActionListener((e) -> {
+            vtkImplicitFunction f = cortado ? cilindroBiomassa : corteCilindro,
                                 g = cortado ? oCilindro2 : corteRevGasCilindro,
-                                h = cortado ? oCilindro3 : corteGasCilindro;
+                                h = cortado ? cilindroGasometro : corteGasCilindro;
             
             //Biomassa
             theCilindroSample.SetImplicitFunction(f);
