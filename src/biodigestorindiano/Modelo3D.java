@@ -27,7 +27,9 @@ public class Modelo3D extends JPanel{
     private static final long serialVersionUID = 1L;
     private final vtkPanel renWin;
     private final JButton exitButton;
+    private final int INDIANO = 0, CHINES = 1, BATELADA = 2;
     private boolean cortado = false;
+    private int tipo = INDIANO;
     
     private vtkImplicitFunction fechaCilindro(double[] centro, double[] eixo, double raio,
                                               double altura)
@@ -116,6 +118,22 @@ public class Modelo3D extends JPanel{
                                                              new double[]{0, 1, 0},
                                                              1.15, 1.2, 0.15, 0, 0.05);
         
+        //Parede
+        vtkImplicitFunction cilindroParede = fechaCilindro(new double[]{0, -0.5, 0},
+                                                   new double[]{0, 1, 0}, 
+                                                   0.9, 1);
+        vtkPlane corteDir = new vtkPlane(),
+                 corteEsq = new vtkPlane();
+        
+        if(tipo == INDIANO)
+        {
+            corteDir.SetOrigin(0.1, 0, 0);
+            corteDir.SetNormal(1, 0, 0);
+
+            corteEsq.SetOrigin(-0.1, 0, 0);
+            corteEsq.SetNormal(-1, 0, 0);
+        }
+        
         //----------------------------------------------------------------------
         
         //Operações-------------------------------------------------------------
@@ -125,6 +143,21 @@ public class Modelo3D extends JPanel{
         corteBiomassaCilindro.SetOperationTypeToIntersection();
         corteBiomassaCilindro.AddFunction(cilindroBiomassa);
         corteBiomassaCilindro.AddFunction(corte);
+        
+        //Parede
+        vtkImplicitBoolean corteParede = new vtkImplicitBoolean(),
+                           parede = new vtkImplicitBoolean();
+        if(tipo == INDIANO)
+        {
+            parede.SetOperationTypeToIntersection();
+            parede.AddFunction(cilindroParede);
+            parede.AddFunction(corteDir);
+            parede.AddFunction(corteEsq);
+            
+            corteParede.SetOperationTypeToIntersection();
+            corteParede.AddFunction(parede);
+            corteParede.AddFunction(corte);
+        }
         
         //Revestimento Gasômetro
         vtkImplicitBoolean cilindroRevGas = new vtkImplicitBoolean();
@@ -154,6 +187,16 @@ public class Modelo3D extends JPanel{
         theCilindroSample.SetSampleDimensions(100, 100, 100);
         theCilindroSample.ComputeNormalsOff();
         
+        //Parede
+        vtkSampleFunction theParedeSample = new vtkSampleFunction();
+        if(tipo == INDIANO)
+        {
+            theParedeSample.SetImplicitFunction(parede);
+            theParedeSample.SetModelBounds(-2.3, 2.8, -2.6, 2.6, -2.6, 2.6);
+            theParedeSample.SetSampleDimensions(100, 100, 100);
+            theParedeSample.ComputeNormalsOff();
+        }
+        
         //Revestimento Gasômetro
         vtkSampleFunction theRevGasCilindroSample = new vtkSampleFunction();
         theRevGasCilindroSample.SetImplicitFunction(cilindroRevGas);
@@ -177,6 +220,11 @@ public class Modelo3D extends JPanel{
         theCilindroSurface.SetInputConnection(theCilindroSample.GetOutputPort());
         theCilindroSurface.SetValue(0, 0.0);
         
+        //Parede
+        vtkContourFilter theParedeSurface = new vtkContourFilter();
+        theParedeSurface.SetInputConnection(theParedeSample.GetOutputPort());
+        theParedeSurface.SetValue(0, 0.0);
+        
         //Revestimento Gasômetro
         vtkContourFilter theRevGasCilindroSurface = new vtkContourFilter();
         theRevGasCilindroSurface.SetInputConnection(theRevGasCilindroSample.GetOutputPort());
@@ -195,6 +243,11 @@ public class Modelo3D extends JPanel{
         vtkPolyDataMapper cilindroMapper = new vtkPolyDataMapper();
         cilindroMapper.SetInputConnection(theCilindroSurface.GetOutputPort());
         cilindroMapper.ScalarVisibilityOff();
+        
+        //Parede
+        vtkPolyDataMapper paredeMapper = new vtkPolyDataMapper();
+        paredeMapper.SetInputConnection(theParedeSurface.GetOutputPort());
+        paredeMapper.ScalarVisibilityOff();
         
         //Revestimento Gasômetro
         vtkPolyDataMapper revGasCilindroMapper = new vtkPolyDataMapper();
@@ -217,6 +270,11 @@ public class Modelo3D extends JPanel{
         new vtkNamedColors().GetColorRGB("Snow", cor);
         cilindroActor.GetProperty().SetColor(cor);
         
+        //Parede
+        vtkActor paredeActor = new vtkActor();
+        paredeActor.SetMapper(paredeMapper);
+        paredeActor.GetProperty().SetColor(cor);
+        
         //Revestimento Gasômetro
         vtkActor revGasCilindroActor = new vtkActor();
         revGasCilindroActor.SetMapper(revGasCilindroMapper);
@@ -232,6 +290,8 @@ public class Modelo3D extends JPanel{
         
         renWin = new vtkPanel();
         renWin.GetRenderer().AddActor(cilindroActor);
+        if(tipo == INDIANO)
+            renWin.GetRenderer().AddActor(paredeActor);
         renWin.GetRenderer().AddActor(revGasCilindroActor);
         renWin.GetRenderer().AddActor(gasCilindroActor);
         
@@ -240,13 +300,23 @@ public class Modelo3D extends JPanel{
         exitButton.addActionListener((e) -> {
             vtkImplicitFunction f = cortado ? cilindroBiomassa : corteBiomassaCilindro,
                                 g = cortado ? cilindroRevGas : corteRevGasCilindro,
-                                h = cortado ? cilindroGasometro : corteGasCilindro;
+                                h = cortado ? cilindroGasometro : corteGasCilindro,
+                                i = cortado ? parede : corteParede;
             
             //Biomassa
             theCilindroSample.SetImplicitFunction(f);
             theCilindroSurface.SetInputConnection(theCilindroSample.GetOutputPort());
             cilindroMapper.SetInputConnection(theCilindroSurface.GetOutputPort());
             cilindroActor.SetMapper(cilindroMapper);
+            
+            //Parede
+            if(tipo == INDIANO)
+            {
+                theParedeSample.SetImplicitFunction(i);
+                theParedeSurface.SetInputConnection(theParedeSample.GetOutputPort());
+                paredeMapper.SetInputConnection(theParedeSurface.GetOutputPort());
+                paredeActor.SetMapper(paredeMapper);
+            }
             
             //Revestimento Gasômetro
             theRevGasCilindroSample.SetImplicitFunction(g);
