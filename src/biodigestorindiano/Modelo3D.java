@@ -24,12 +24,122 @@ import vtk.vtkPolyDataMapper;
  * @author jota
  */
 public class Modelo3D extends JPanel{
+    final class Actor{
+        private vtkImplicitFunction funcao;
+        private double xMin, xMax, yMin, yMax, zMin, zMax;
+        private String nomeCor;
+        private vtkActor actor;
+        
+        private vtkSampleFunction sample;
+        private vtkContourFilter surface;
+        private vtkPolyDataMapper mapper;
+        
+        public final void setFuncao(vtkImplicitFunction funcao)
+        {
+            this.funcao = funcao;
+        }
+        
+        public final void setMinMax(double[] vetMinMax)
+        {
+            xMin = vetMinMax[0];
+            xMax = vetMinMax[1];
+            yMin = vetMinMax[2];
+            yMax = vetMinMax[3];
+            zMin = vetMinMax[4];
+            zMax = vetMinMax[5];
+        }
+        
+        public void setNomeCor(String nomeCor)
+        {
+            this.nomeCor = nomeCor;
+        }
+        
+        public void criaActor(vtkImplicitFunction funcao, double[] minMax, String nomeCor)
+        {
+            setFuncao(funcao);
+            setMinMax(minMax);
+            setNomeCor(nomeCor);
+          
+            sample = new vtkSampleFunction();
+            surface = new vtkContourFilter();
+            mapper = new vtkPolyDataMapper();
+            
+            actor = new vtkActor();
+            
+            
+            sample.SetImplicitFunction(this.funcao);
+            sample.SetModelBounds(xMin, xMax, yMin, yMax, zMin, zMax);
+            sample.SetSampleDimensions(80, 80, 80);
+            sample.ComputeNormalsOff();
+            
+            surface.SetInputConnection(sample.GetOutputPort());
+            surface.SetValue(0, 0.0);
+            
+            mapper.SetInputConnection(surface.GetOutputPort());
+            mapper.ScalarVisibilityOff();
+        
+            double[] cor = new double[3];
+            
+            actor.SetMapper(mapper);
+            new vtkNamedColors().GetColorRGB(this.nomeCor, cor);
+            actor.GetProperty().SetColor(cor);
+        }
+        
+        public Actor()
+        {
+            funcao = null;
+            xMin = 0; xMax = 0; yMin = 0; yMax = 0; zMin = 0; zMax = 0;
+            nomeCor = null;
+            
+            sample = null;
+            surface = null;
+            mapper = null;
+            
+            actor = null;
+        }
+        
+        public Actor(vtkImplicitFunction funcao, double[] minMax, String nomeCor)
+        {
+            criaActor(funcao, minMax, nomeCor);
+        }
+        
+        public void atualizaActor(vtkImplicitFunction funcao)
+        {
+            setFuncao(funcao);
+            
+            sample.SetImplicitFunction(this.funcao);
+            surface.SetInputConnection(sample.GetOutputPort());
+            mapper.SetInputConnection(surface.GetOutputPort());
+            actor.SetMapper(mapper);
+        }
+        
+        public vtkImplicitFunction getFuncao()
+        {
+            return funcao;
+        }
+        
+        public double[] getMinMax()
+        {
+            return new double[]{xMin, xMax, yMin, yMax, zMin, zMax};
+        }
+        
+        public String getNomeCor()
+        {
+            return nomeCor;
+        }
+        
+        public vtkActor getActor()
+        {
+            return actor;
+        }
+    }
+    
     private static final long serialVersionUID = 1L;
     private final vtkPanel renWin;
     private final JButton exitButton;
     private final int INDIANO = 0, CHINES = 1, BATELADA = 2;
     private boolean cortado = false;
-    private int tipo = INDIANO;
+    private int tipo = BATELADA;
     
     private vtkImplicitFunction fechaCilindro(double[] centro, double[] eixo, double raio,
                                               double altura)
@@ -271,202 +381,35 @@ public class Modelo3D extends JPanel{
         //Amostra---------------------------------------------------------------
         
         //Solo
-        vtkSampleFunction theSoloSample = new vtkSampleFunction();
-        theSoloSample.SetImplicitFunction(solo);
-        theSoloSample.SetModelBounds(-4.1, 4.1, 0, 2.3, -4.1, 4.1);
-        theSoloSample.SetSampleDimensions(80, 80, 80);
-        theSoloSample.ComputeNormalsOff();
-        
-        //Biomassa
-        vtkSampleFunction theCilindroSample = new vtkSampleFunction();
-        theCilindroSample.SetImplicitFunction(cilindroBiomassa);
-        theCilindroSample.SetModelBounds(-1.1, 1.1, -1.3, 1.3, -1.1, 1.1);
-        theCilindroSample.SetSampleDimensions(80, 80, 80);
-        theCilindroSample.ComputeNormalsOff();
-        
-        //Parede
-        vtkSampleFunction theParedeSample = new vtkSampleFunction();
-        if(tipo == INDIANO)
-        {
-            theParedeSample.SetImplicitFunction(parede);
-            theParedeSample.SetModelBounds(-1.1, 1.1, -1.3, 1.3, -1.1, 1.1);
-            theParedeSample.SetSampleDimensions(80, 80, 80);
-            theParedeSample.ComputeNormalsOff();
-        }
-        
-        //Revestimento Gasômetro
-        vtkSampleFunction theRevGasCilindroSample = new vtkSampleFunction();
-        theRevGasCilindroSample.SetImplicitFunction(cilindroRevGas);
-        theRevGasCilindroSample.SetModelBounds(-1.4, 1.4, 1.1, 2.5, -1.4, 1.4);
-        theRevGasCilindroSample.SetSampleDimensions(80, 80, 80);
-        theRevGasCilindroSample.ComputeNormalsOff();
-        
-        //Gasômetro
-        vtkSampleFunction theGasCilindroSample = new vtkSampleFunction();
-        theGasCilindroSample.SetImplicitFunction(cilindroGasometro);
-        theGasCilindroSample.SetModelBounds(-1.25, 1.25, 1.1, 2.6, -1.25, 1.25);
-        theGasCilindroSample.SetSampleDimensions(80, 80, 80);
-        theGasCilindroSample.ComputeNormalsOff();
-        
-        //Tubo esquerdo e direito
-        vtkSampleFunction theTuboEsqSample = new vtkSampleFunction();
-        vtkSampleFunction theTuboDirSample = new vtkSampleFunction();
+        Actor atorSolo = new Actor(solo, new double[]{-4.1, 4.1, 0, 2.3, -4.1, 4.1}, "Chocolate"),
+              atorBiomassa = new Actor(cilindroBiomassa, new double[]{-1.1, 1.1, -1.3, 1.3, -1.1, 1.1}, "Snow"),
+              atorRevGas = new Actor(cilindroRevGas, new double[]{-1.4, 1.4, 1.1, 2.5, -1.4, 1.4}, "Snow"),
+              atorGas = new Actor(cilindroGasometro, new double[]{-1.25, 1.25, 1.1, 2.6, -1.25, 1.25}, "Gray"),
+              atorParede = new Actor(),
+              atorTuboEsq = new Actor(),
+              atorTuboDir = new Actor();
         
         if(tipo == INDIANO)
         {
-            theTuboEsqSample.SetImplicitFunction(tuboEsq);
-            theTuboEsqSample.SetModelBounds(-1.1 - mEsq, -0.7, -1.2 + 0.2 + 0.2, 2.15 + 0.7, -0.3, 0.3);
-            theTuboEsqSample.SetSampleDimensions(80, 80, 80);
-            theTuboEsqSample.ComputeNormalsOff();
-            
-            theTuboDirSample.SetImplicitFunction(tuboDir);
-            theTuboDirSample.SetModelBounds(0.7, 1.1 + mDir, -1.2 + 0.2 + 0.2, 2.15 + 0.6, -0.3, 0.3);
-            theTuboDirSample.SetSampleDimensions(80, 80, 80);
-            theTuboDirSample.ComputeNormalsOff();
+            atorParede.criaActor(parede, new double[]{-1.1, 1.1, -1.3, 1.3, -1.1, 1.1}, "Snow");
+            atorTuboEsq.criaActor(tuboEsq, new double[]{-1.1 - mEsq, -0.7, -1.2 + 0.2 + 0.2, 2.15 + 0.7, -0.3, 0.3}, "Snow");
+            atorTuboDir.criaActor(tuboDir, new double[]{0.7, 1.1 + mDir, -1.2 + 0.2 + 0.2, 2.15 + 0.6, -0.3, 0.3}, "Snow");
         }
-        
-        //----------------------------------------------------------------------
-        
-        //Contorno--------------------------------------------------------------
-        
-        //Solo
-        vtkContourFilter theSoloSurface = new vtkContourFilter();
-        theSoloSurface.SetInputConnection(theSoloSample.GetOutputPort());
-        theSoloSurface.SetValue(0, 0.0);
-
-        //Biomassa
-        vtkContourFilter theCilindroSurface = new vtkContourFilter();
-        theCilindroSurface.SetInputConnection(theCilindroSample.GetOutputPort());
-        theCilindroSurface.SetValue(0, 0.0);
-        
-        //Parede
-        vtkContourFilter theParedeSurface = new vtkContourFilter();
-        theParedeSurface.SetInputConnection(theParedeSample.GetOutputPort());
-        theParedeSurface.SetValue(0, 0.0);
-        
-        //Revestimento Gasômetro
-        vtkContourFilter theRevGasCilindroSurface = new vtkContourFilter();
-        theRevGasCilindroSurface.SetInputConnection(theRevGasCilindroSample.GetOutputPort());
-        theRevGasCilindroSurface.SetValue(0, 0.0);
-        
-        //Gasômetro
-        vtkContourFilter theGasCilindroSurface = new vtkContourFilter();
-        theGasCilindroSurface.SetInputConnection(theGasCilindroSample.GetOutputPort());
-        theGasCilindroSurface.SetValue(0, 0.0);
-        
-        //Tubo esquerdo e direito
-        vtkContourFilter theTuboEsqSurface = new vtkContourFilter();
-        vtkContourFilter theTuboDirSurface = new vtkContourFilter();
-        
-        if(tipo == INDIANO)
-        {
-            theTuboEsqSurface.SetInputConnection(theTuboEsqSample.GetOutputPort());
-            theTuboEsqSurface.SetValue(0, 0.0);
-            
-            theTuboDirSurface.SetInputConnection(theTuboDirSample.GetOutputPort());
-            theTuboDirSurface.SetValue(0, 0.0);
-        }
-        
-        //----------------------------------------------------------------------
-        
-        //Polígonos-------------------------------------------------------------
-       
-        //Solo
-        vtkPolyDataMapper soloMapper = new vtkPolyDataMapper();
-        soloMapper.SetInputConnection(theSoloSurface.GetOutputPort());
-        soloMapper.ScalarVisibilityOff();
-        
-        //Biomassa
-        vtkPolyDataMapper cilindroMapper = new vtkPolyDataMapper();
-        cilindroMapper.SetInputConnection(theCilindroSurface.GetOutputPort());
-        cilindroMapper.ScalarVisibilityOff();
-        
-        //Parede
-        vtkPolyDataMapper paredeMapper = new vtkPolyDataMapper();
-        paredeMapper.SetInputConnection(theParedeSurface.GetOutputPort());
-        paredeMapper.ScalarVisibilityOff();
-        
-        //Revestimento Gasômetro
-        vtkPolyDataMapper revGasCilindroMapper = new vtkPolyDataMapper();
-        revGasCilindroMapper.SetInputConnection(theRevGasCilindroSurface.GetOutputPort());
-        revGasCilindroMapper.ScalarVisibilityOff();
-        
-        //Gasômetro
-        vtkPolyDataMapper gasCilindroMapper = new vtkPolyDataMapper();
-        gasCilindroMapper.SetInputConnection(theGasCilindroSurface.GetOutputPort());
-        gasCilindroMapper.ScalarVisibilityOff();
-        
-        //Tubo esquerdo e direito
-        vtkPolyDataMapper tuboEsqMapper = new vtkPolyDataMapper();
-        vtkPolyDataMapper tuboDirMapper = new vtkPolyDataMapper();
-        if(tipo == INDIANO)
-        {
-            tuboEsqMapper.SetInputConnection(theTuboEsqSurface.GetOutputPort());
-            tuboEsqMapper.ScalarVisibilityOff();
-            
-            tuboDirMapper.SetInputConnection(theTuboDirSurface.GetOutputPort());
-            tuboDirMapper.ScalarVisibilityOff();
-        }
-        
-        //----------------------------------------------------------------------
-        
-        //Ator------------------------------------------------------------------
-        double[] cor = new double[3];
-        
-        //Solo
-        vtkActor soloActor = new vtkActor();
-        soloActor.SetMapper(soloMapper);
-        new vtkNamedColors().GetColorRGB("Chocolate", cor);
-        soloActor.GetProperty().SetColor(cor);
-        
-        //Biomassa
-        vtkActor cilindroActor = new vtkActor();
-        cilindroActor.SetMapper(cilindroMapper);
-        new vtkNamedColors().GetColorRGB("Snow", cor);
-        cilindroActor.GetProperty().SetColor(cor);
-        
-        //Parede, tubo esquerdo e direito
-        vtkActor paredeActor = new vtkActor();
-        vtkActor tuboEsqActor = new vtkActor();
-        vtkActor tuboDirActor = new vtkActor();
-        
-        if(tipo == INDIANO)
-        {
-            paredeActor.SetMapper(paredeMapper);
-            paredeActor.GetProperty().SetColor(cor);
-            
-            tuboEsqActor.SetMapper(tuboEsqMapper);
-            tuboEsqActor.GetProperty().SetColor(cor);
-            
-            tuboDirActor.SetMapper(tuboDirMapper);
-            tuboDirActor.GetProperty().SetColor(cor);
-        }
-        
-        
-        //Revestimento Gasômetro
-        vtkActor revGasCilindroActor = new vtkActor();
-        revGasCilindroActor.SetMapper(revGasCilindroMapper);
-        revGasCilindroActor.GetProperty().SetColor(cor);
-        
-        //Gasômetro
-        vtkActor gasCilindroActor = new vtkActor();
-        gasCilindroActor.SetMapper(gasCilindroMapper);
-        new vtkNamedColors().GetColorRGB("Gray", cor);
-        gasCilindroActor.GetProperty().SetColor(cor);
         
         //----------------------------------------------------------------------
         
         renWin = new vtkPanel();
-        renWin.GetRenderer().AddActor(soloActor);
-        renWin.GetRenderer().AddActor(cilindroActor);
+        renWin.GetRenderer().AddActor(atorSolo.getActor());
+        renWin.GetRenderer().AddActor(atorBiomassa.getActor());
+        renWin.GetRenderer().AddActor(atorRevGas.getActor());
+        renWin.GetRenderer().AddActor(atorGas.getActor());
+        
         if(tipo == INDIANO)
         {
-            renWin.GetRenderer().AddActor(paredeActor);
-            renWin.GetRenderer().AddActor(tuboEsqActor);
-            renWin.GetRenderer().AddActor(tuboDirActor);
+            renWin.GetRenderer().AddActor(atorParede.getActor());
+            renWin.GetRenderer().AddActor(atorTuboEsq.getActor());
+            renWin.GetRenderer().AddActor(atorTuboDir.getActor());
         }
-        renWin.GetRenderer().AddActor(revGasCilindroActor);
-        renWin.GetRenderer().AddActor(gasCilindroActor);
         
         // Add Java UI components
         exitButton = new JButton("Corte");
@@ -479,51 +422,17 @@ public class Modelo3D extends JPanel{
                                 k = cortado ? tuboEsq : corteTuboEsq,
                                 l = cortado ? tuboDir : corteTuboDir;
             
-            //Solo
-            theSoloSample.SetImplicitFunction(j);
-            theSoloSurface.SetInputConnection(theSoloSample.GetOutputPort());
-            soloMapper.SetInputConnection(theSoloSurface.GetOutputPort());
-            soloActor.SetMapper(soloMapper);
-
-            //Biomassa
-            theCilindroSample.SetImplicitFunction(f);
-            theCilindroSurface.SetInputConnection(theCilindroSample.GetOutputPort());
-            cilindroMapper.SetInputConnection(theCilindroSurface.GetOutputPort());
-            cilindroActor.SetMapper(cilindroMapper);
+            atorSolo.atualizaActor(j);
+            atorBiomassa.atualizaActor(f);
+            atorRevGas.atualizaActor(g);
+            atorGas.atualizaActor(h);
             
             //Parede
             if(tipo == INDIANO)
             {
-                theParedeSample.SetImplicitFunction(i);
-                theParedeSurface.SetInputConnection(theParedeSample.GetOutputPort());
-                paredeMapper.SetInputConnection(theParedeSurface.GetOutputPort());
-                paredeActor.SetMapper(paredeMapper);
-            }
-            
-            //Revestimento Gasômetro
-            theRevGasCilindroSample.SetImplicitFunction(g);
-            theRevGasCilindroSurface.SetInputConnection(theRevGasCilindroSample.GetOutputPort());
-            revGasCilindroMapper.SetInputConnection(theRevGasCilindroSurface.GetOutputPort());
-            revGasCilindroActor.SetMapper(revGasCilindroMapper);
-            
-            //Gasômetro
-            theGasCilindroSample.SetImplicitFunction(h);
-            theGasCilindroSurface.SetInputConnection(theGasCilindroSample.GetOutputPort());
-            gasCilindroMapper.SetInputConnection(theGasCilindroSurface.GetOutputPort());
-            gasCilindroActor.SetMapper(gasCilindroMapper);
-            
-            //Tubo esquerdo e direito
-            if(tipo == INDIANO)
-            {
-                theTuboEsqSample.SetImplicitFunction(k);
-                theTuboEsqSurface.SetInputConnection(theTuboEsqSample.GetOutputPort());
-                tuboEsqMapper.SetInputConnection(theTuboEsqSurface.GetOutputPort());
-                tuboEsqActor.SetMapper(tuboEsqMapper);
-            
-                theTuboDirSample.SetImplicitFunction(l);
-                theTuboDirSurface.SetInputConnection(theTuboDirSample.GetOutputPort());
-                tuboDirMapper.SetInputConnection(theTuboDirSurface.GetOutputPort());
-                tuboDirActor.SetMapper(tuboDirMapper);
+                atorParede.atualizaActor(i);
+                atorTuboEsq.atualizaActor(k);
+                atorTuboDir.atualizaActor(l);
             }
             
             cortado = !cortado;
