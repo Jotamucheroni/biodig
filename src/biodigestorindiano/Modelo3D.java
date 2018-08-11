@@ -25,7 +25,9 @@ import vtk.vtkPolyDataMapper;
  */
 public class Modelo3D extends JPanel{
     final class Actor{
-        private vtkImplicitFunction funcao;
+        private vtkImplicitFunction funcao, funcaoOriginal;
+        private vtkImplicitBoolean funcaoCortada;
+        private boolean cortado;
         private double xMin, xMax, yMin, yMax, zMin, zMax;
         private String nomeCor;
         private vtkActor actor;
@@ -34,9 +36,20 @@ public class Modelo3D extends JPanel{
         private vtkContourFilter surface;
         private vtkPolyDataMapper mapper;
         
-        public final void setFuncao(vtkImplicitFunction funcao)
+        public final void setFuncaoOriginal(vtkImplicitFunction funcao)
         {
-            this.funcao = funcao;
+            this.funcao = this.funcaoOriginal = funcao;
+            
+            cortado = false;
+            
+            vtkPlane corte = new vtkPlane();
+            corte.SetOrigin(0, 0, 0);
+            corte.SetNormal(0, 0, 1);
+            
+            funcaoCortada = new vtkImplicitBoolean();
+            funcaoCortada.SetOperationTypeToIntersection();
+            funcaoCortada.AddFunction(this.funcaoOriginal);
+            funcaoCortada.AddFunction(corte);
         }
         
         public final void setMinMax(double[] vetMinMax)
@@ -56,7 +69,7 @@ public class Modelo3D extends JPanel{
         
         public void criaActor(vtkImplicitFunction funcao, double[] minMax, String nomeCor)
         {
-            setFuncao(funcao);
+            setFuncaoOriginal(funcao);
             setMinMax(minMax);
             setNomeCor(nomeCor);
           
@@ -66,8 +79,7 @@ public class Modelo3D extends JPanel{
             
             actor = new vtkActor();
             
-            
-            sample.SetImplicitFunction(this.funcao);
+            sample.SetImplicitFunction(funcaoOriginal);
             sample.SetModelBounds(xMin, xMax, yMin, yMax, zMin, zMax);
             sample.SetSampleDimensions(80, 80, 80);
             sample.ComputeNormalsOff();
@@ -87,7 +99,8 @@ public class Modelo3D extends JPanel{
         
         public Actor()
         {
-            funcao = null;
+            funcaoOriginal = null; funcaoCortada = null;
+            cortado = false;
             xMin = 0; xMax = 0; yMin = 0; yMax = 0; zMin = 0; zMax = 0;
             nomeCor = null;
             
@@ -105,7 +118,7 @@ public class Modelo3D extends JPanel{
         
         public void atualizaActor(vtkImplicitFunction funcao)
         {
-            setFuncao(funcao);
+            this.funcao = funcao;
             
             sample.SetImplicitFunction(this.funcao);
             surface.SetInputConnection(sample.GetOutputPort());
@@ -113,9 +126,19 @@ public class Modelo3D extends JPanel{
             actor.SetMapper(mapper);
         }
         
+        public void cortaActor()
+        {
+            if(cortado)
+                atualizaActor(funcaoOriginal);
+            else
+                atualizaActor(funcaoCortada);
+            
+            cortado = !cortado;
+        }
+        
         public vtkImplicitFunction getFuncao()
         {
-            return funcao;
+            return funcaoOriginal;
         }
         
         public double[] getMinMax()
@@ -139,7 +162,7 @@ public class Modelo3D extends JPanel{
     private final JButton exitButton;
     private final int INDIANO = 0, CHINES = 1, BATELADA = 2;
     private boolean cortado = false;
-    private int tipo = BATELADA;
+    private int tipo;
     
     private vtkImplicitFunction fechaCilindro(double[] centro, double[] eixo, double raio,
                                               double altura)
@@ -203,9 +226,9 @@ public class Modelo3D extends JPanel{
     }
     
     // -----------------------------------------------------------------
-    public Modelo3D() {
+    public Modelo3D(int Tipo) {
         super(new BorderLayout());
-
+        tipo = Tipo;
         //Funções---------------------------------------------------------------
         
         //Solo
@@ -223,9 +246,6 @@ public class Modelo3D extends JPanel{
                             cilindroAux = fechaCilindro(new double[]{0, 0, 0},
                                                         new double[]{0, 1, 0}, 
                                                         0.9, 4);
-        vtkPlane corte = new vtkPlane();
-        corte.SetOrigin(0, 0, 0);
-        corte.SetNormal(0, 0, 1);
         
         //Revestimento Gasômetro
         vtkImplicitFunction cilindroRevGasometro = geraCilindro(new double[]{0, 1.8, 0}, 
@@ -271,11 +291,26 @@ public class Modelo3D extends JPanel{
                   mDir       = Math.tan(Math.toRadians(30)) * Hdir;
         
         vtkImplicitFunction tuboEsq = geraCilindro(new double[]{-0.9 - xEsq, -1.2 + 0.2 + 0.3 + 0.1 + yEsq, 0},
-                                  new double[]{-xi, yi, 0}, 
-                                  0.1, compEsq + 0.2, 0.03, 0, 0),
+                                                   new double[]{-xi, yi, 0}, 
+                                                   0.1, compEsq + 0.2, 0.03, 0, 0),
                             tuboDir = geraCilindro(new double[]{0.9 + xDir, -1.2 + 0.2 + 0.3 + 0.1 + yDir, 0},
-                                   new double[]{xi, yi, 0}, 
-                                   0.1, compDir + 0.2, 0.03, 0, 0);
+                                                   new double[]{xi, yi, 0}, 
+                                                   0.1, compDir + 0.2, 0.03, 0, 0);
+        
+        //Caixa de entrada
+        vtkImplicitFunction caixaEnt = geraCilindro(new double[]{-0.9 - mEsq, 2.1 + 0.5, 0},
+                                                    new double[]{0, 1, 0}, 
+                                                    0.5, 1, 0.1, 0, 0);
+        
+        //Caixa de saída
+        vtkImplicitFunction caixaSai = geraCilindro(new double[]{0.9 + mDir, 2.1 + 0.2, 0},
+                                                    new double[]{0, 1, 0}, 
+                                                    0.5, 0.4, 0.1, 0, 0);
+        
+        //Fundo da caixa de entrada
+        vtkImplicitFunction caixaEntFundoNormal = fechaCilindro(new double[]{-0.9 - mEsq, 2.1 + 0.5, 0},
+                                                                 new double[]{0, 1, 0}, 
+                                                                 0.4, 0.01);
         
         if(tipo == INDIANO)
         {
@@ -309,11 +344,6 @@ public class Modelo3D extends JPanel{
             solo.AddFunction(tuboDirFuro);
         }
         
-        vtkImplicitBoolean corteSolo = new vtkImplicitBoolean();
-        corteSolo.SetOperationTypeToIntersection();
-        corteSolo.AddFunction(solo);
-        corteSolo.AddFunction(corte);
-        
         //Biomassa
         vtkImplicitBoolean cilindroBiomassa = new vtkImplicitBoolean();
         cilindroBiomassa.SetOperationTypeToDifference();
@@ -325,24 +355,15 @@ public class Modelo3D extends JPanel{
             cilindroBiomassa.AddFunction(tuboDirFuro);
         }
         
-        vtkImplicitBoolean corteBiomassaCilindro = new vtkImplicitBoolean();
-        corteBiomassaCilindro.SetOperationTypeToIntersection();
-        corteBiomassaCilindro.AddFunction(cilindroBiomassa);
-        corteBiomassaCilindro.AddFunction(corte);
-        
         //Parede
-        vtkImplicitBoolean corteParede = new vtkImplicitBoolean(),
-                           parede = new vtkImplicitBoolean();
+        vtkImplicitBoolean parede = new vtkImplicitBoolean();
+        
         if(tipo == INDIANO)
         {
             parede.SetOperationTypeToIntersection();
             parede.AddFunction(cilindroParede);
             parede.AddFunction(corteDir);
             parede.AddFunction(corteEsq);
-            
-            corteParede.SetOperationTypeToIntersection();
-            corteParede.AddFunction(parede);
-            corteParede.AddFunction(corte);
         }
         
         //Revestimento Gasômetro
@@ -351,34 +372,13 @@ public class Modelo3D extends JPanel{
         cilindroRevGas.AddFunction(cilindroRevGasometro);
         cilindroRevGas.AddFunction(cilindroAux);
         
-        vtkImplicitBoolean corteRevGasCilindro = new vtkImplicitBoolean();
-        corteRevGasCilindro.SetOperationTypeToIntersection();
-        corteRevGasCilindro.AddFunction(cilindroRevGas);
-        corteRevGasCilindro.AddFunction(corte);
-        
-        //Gasômetro     
-        vtkImplicitBoolean corteGasCilindro = new vtkImplicitBoolean();
-        corteGasCilindro.SetOperationTypeToIntersection();
-        corteGasCilindro.AddFunction(cilindroGasometro);
-        corteGasCilindro.AddFunction(corte);
-        
-        //Tubo esquerdo e direito
-        vtkImplicitBoolean corteTuboEsq = new vtkImplicitBoolean();
-        vtkImplicitBoolean corteTuboDir = new vtkImplicitBoolean();
-        if(tipo == INDIANO)
-        {
-            corteTuboEsq.SetOperationTypeToIntersection();
-            corteTuboEsq.AddFunction(tuboEsq);
-            corteTuboEsq.AddFunction(corte);
-        
-            corteTuboDir.SetOperationTypeToIntersection();
-            corteTuboDir.AddFunction(tuboDir);
-            corteTuboDir.AddFunction(corte);
-        }
+        //Fundo da caixa de entrada
+        vtkImplicitBoolean caixaEntFundo = new vtkImplicitBoolean();
+        caixaEntFundo.SetOperationTypeToDifference();
+        caixaEntFundo.AddFunction(caixaEntFundoNormal);
+        caixaEntFundo.AddFunction(tuboEsqFuro);
 
-        //----------------------------------------------------------------------
-        
-        //Amostra---------------------------------------------------------------
+        //Actor-----------------------------------------------------------------
         
         //Solo
         Actor atorSolo = new Actor(solo, new double[]{-4.1, 4.1, 0, 2.3, -4.1, 4.1}, "Chocolate"),
@@ -387,13 +387,19 @@ public class Modelo3D extends JPanel{
               atorGas = new Actor(cilindroGasometro, new double[]{-1.25, 1.25, 1.1, 2.6, -1.25, 1.25}, "Gray"),
               atorParede = new Actor(),
               atorTuboEsq = new Actor(),
-              atorTuboDir = new Actor();
+              atorTuboDir = new Actor(),
+              atorCaixaEnt = new Actor(),
+              atorCaixaSai = new Actor(),
+              atorCaixaEntFundo = new Actor();
         
         if(tipo == INDIANO)
         {
             atorParede.criaActor(parede, new double[]{-1.1, 1.1, -1.3, 1.3, -1.1, 1.1}, "Snow");
             atorTuboEsq.criaActor(tuboEsq, new double[]{-1.1 - mEsq, -0.7, -1.2 + 0.2 + 0.2, 2.15 + 0.7, -0.3, 0.3}, "Snow");
             atorTuboDir.criaActor(tuboDir, new double[]{0.7, 1.1 + mDir, -1.2 + 0.2 + 0.2, 2.15 + 0.6, -0.3, 0.3}, "Snow");
+            atorCaixaEnt.criaActor(caixaEnt, new double[]{-0.9 - mEsq - 0.6, -0.9 - mEsq + 0.6, 2, 2.1 + 1.1, -0.6, 0.6}, "Snow");
+            atorCaixaSai.criaActor(caixaSai, new double[]{0.9 + mDir - 0.6 , 0.9 + mDir + 0.6, 2, 2.1 + 0.5, -0.6, 0.6}, "Snow");
+            atorCaixaEntFundo.criaActor(caixaEntFundo, new double[]{-0.9 - mEsq - 0.5, -0.9 - mEsq + 0.5, 2 + 0.3, 2.1 + 0.8, -0.5, 0.5}, "Snow");
         }
         
         //----------------------------------------------------------------------
@@ -409,30 +415,28 @@ public class Modelo3D extends JPanel{
             renWin.GetRenderer().AddActor(atorParede.getActor());
             renWin.GetRenderer().AddActor(atorTuboEsq.getActor());
             renWin.GetRenderer().AddActor(atorTuboDir.getActor());
+            renWin.GetRenderer().AddActor(atorCaixaEnt.getActor());
+            renWin.GetRenderer().AddActor(atorCaixaSai.getActor());
+            renWin.GetRenderer().AddActor(atorCaixaEntFundo.getActor());
         }
         
         // Add Java UI components
         exitButton = new JButton("Corte");
         exitButton.addActionListener((e) -> {
-            vtkImplicitFunction f = cortado ? cilindroBiomassa : corteBiomassaCilindro,
-                                g = cortado ? cilindroRevGas : corteRevGasCilindro,
-                                h = cortado ? cilindroGasometro : corteGasCilindro,
-                                i = cortado ? parede : corteParede,
-                                j = cortado ? solo : corteSolo,
-                                k = cortado ? tuboEsq : corteTuboEsq,
-                                l = cortado ? tuboDir : corteTuboDir;
-            
-            atorSolo.atualizaActor(j);
-            atorBiomassa.atualizaActor(f);
-            atorRevGas.atualizaActor(g);
-            atorGas.atualizaActor(h);
+            atorSolo.cortaActor();
+            atorBiomassa.cortaActor();
+            atorRevGas.cortaActor();
+            atorGas.cortaActor();
             
             //Parede
             if(tipo == INDIANO)
             {
-                atorParede.atualizaActor(i);
-                atorTuboEsq.atualizaActor(k);
-                atorTuboDir.atualizaActor(l);
+                atorParede.cortaActor();
+                atorTuboEsq.cortaActor();
+                atorTuboDir.cortaActor();
+                atorCaixaEnt.cortaActor();
+                atorCaixaSai.cortaActor();
+                atorCaixaEntFundo.cortaActor();
             }
             
             cortado = !cortado;
@@ -443,15 +447,15 @@ public class Modelo3D extends JPanel{
         add(exitButton, BorderLayout.SOUTH);
     }
  
-    public static void iniciar() {
+    public static void iniciar(int tipo) {
         SwingUtilities.invokeLater( () ->
             {
                 vtkNativeLibrary.LoadAllNativeLibraries();
                 
-                JFrame frame = new JFrame("SimpleVTK");
+                JFrame frame = new JFrame("Biodigestor 3D");
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame.getContentPane().setLayout(new BorderLayout());
-                frame.getContentPane().add(new Modelo3D(), BorderLayout.CENTER);
+                frame.getContentPane().add(new Modelo3D(tipo), BorderLayout.CENTER);
                 frame.setSize(800, 800);
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);

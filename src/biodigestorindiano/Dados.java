@@ -559,7 +559,7 @@ public class Dados extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         //System.exit(0);
-        Modelo3D.iniciar();
+        Modelo3D.iniciar(jComboBox2.getSelectedIndex());
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
