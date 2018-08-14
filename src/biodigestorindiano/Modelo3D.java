@@ -362,7 +362,7 @@ public class Modelo3D extends JPanel{
         
         vtkImplicitFunction furoCalotaSup = fechaCilindro(new double[]{0, 1.2 + hg, 0},
                                                           new double[]{0, 1, 0},
-                                                          0.6, 1);
+                                                          0.3, 1);
         
         double hf = D / 8,
                Rf = ( (D*D / 4) + hf*hf ) / (2*hf);
@@ -374,11 +374,29 @@ public class Modelo3D extends JPanel{
         //Tampa de inspeção
         vtkImplicitFunction tampaInspNormal = geraCilindro(new double[]{0, 1.2 + hg, 0},
                                                            new double[]{0, 1, 0},
-                                                           0.7, 1, 0.1, 0, 0.1);
+                                                           0.4, 1, 0.1, 0, 0.1);
         
         vtkSphere corteTampa = new vtkSphere();
         corteTampa.SetCenter(0, 1.2 + hg - Rg, 0);
         corteTampa.SetRadius(Rg);
+        
+        //Tubo de saída
+        double altTubo = 2.4 / 3 + 0.2 + 0.1;
+        vtkImplicitFunction tuboSaiNormal = geraCilindro(new double[]{1 + 0.3 / 2, 1.2 - altTubo / 2, 0},
+                                                   new double[]{0, 1, 0},
+                                                   0.25, altTubo, 0.1, 0.1, 0);
+        
+        vtkImplicitFunction furoTuboSai = fechaCilindro(new double[]{0.1, 1.2 - altTubo + 0.1 + 0.1, 0},
+                                                   new double[]{1, 0, 0},
+                                                   0.1, 1 * 2);
+        //Caixa de saída chinês
+        vtkImplicitFunction caixaSaiChNormal = geraCilindro(new double[]{0.9 + 1, 1.2 + 0.8 / 2, 0},
+                                                   new double[]{0, 1, 0},
+                                                   1, 0.8, 0.1, 0.1, 0);
+        
+        vtkImplicitFunction furoSaiCh = fechaCilindro(new double[]{1 + 0.3 / 2, 1.2 - altTubo / 2 + 0.2, 0},
+                                                   new double[]{0, 1, 0},
+                                                   0.15, altTubo);
         
         if(tipo == INDIANO || tipo == CHINES)
         {
@@ -426,6 +444,9 @@ public class Modelo3D extends JPanel{
             
             if(tipo == INDIANO)
                 cilindroBiomassa.AddFunction(tuboDirFuro);
+            
+            if(tipo == CHINES)
+                cilindroBiomassa.AddFunction(furoTuboSai);
         }
         
         //Parede
@@ -465,6 +486,12 @@ public class Modelo3D extends JPanel{
         //Calota superior
         vtkImplicitBoolean calotaSup = new vtkImplicitBoolean();
         
+        //Tubo de saída
+        vtkImplicitBoolean tuboSai = new vtkImplicitBoolean();
+        
+        //Caixa de saída chinês
+        vtkImplicitBoolean caixaSaiCh = new vtkImplicitBoolean();
+        
         if(tipo == CHINES)
         {
             tampaInsp.SetOperationTypeToDifference();
@@ -474,13 +501,23 @@ public class Modelo3D extends JPanel{
             calotaSup.SetOperationTypeToDifference();
             calotaSup.AddFunction(calotaSupNormal);
             calotaSup.AddFunction(furoCalotaSup);
+            
+            tuboSai.SetOperationTypeToDifference();
+            tuboSai.AddFunction(tuboSaiNormal);
+            tuboSai.AddFunction(cilindroBiomassa);
+            tuboSai.AddFunction(furoTuboSai);
+            
+            caixaSaiCh.SetOperationTypeToDifference();
+            caixaSaiCh.AddFunction(caixaSaiChNormal);
+            caixaSaiCh.AddFunction(calotaSup);
+            caixaSaiCh.AddFunction(furoSaiCh);
         }  
 
         //Actor-----------------------------------------------------------------
         
         //Solo
         Actor atorSolo = new Actor(solo, new double[]{-4.1, 4.1, 0, 2.3, -4.1, 4.1}, "Chocolate"),
-              atorBiomassa = new Actor(cilindroBiomassa, new double[]{-1.1, 1.1, -1.3, 1.3, -1.1, 1.1}, "Snow"),
+              atorBiomassa = new Actor(cilindroBiomassa, new double[]{-1, 1, -1.2, 1.2, -1, 1}, "Snow"),
               atorRevGas = new Actor(),
               atorGas = new Actor(),
               atorParede = new Actor(),
@@ -491,7 +528,9 @@ public class Modelo3D extends JPanel{
               atorCaixaEntFundo = new Actor(),
               atorCalotaSup = new Actor(),
               atorCalotaInf = new Actor(),
-              atorTampaInsp = new Actor();
+              atorTampaInsp = new Actor(),
+              atorTuboSai = new Actor(),
+              atorCaixaSaiCh = new Actor();
         
         if(tipo == INDIANO || tipo == BATELADA)
         {
@@ -512,7 +551,9 @@ public class Modelo3D extends JPanel{
             {
                 atorCalotaSup.criaActor(calotaSup, new double[]{-1.1, 1.1, 1.1, 1.2 + hg + 0.1, -1.1, 1.1}, "Snow");
                 atorCalotaInf.criaActor(calotaInf, new double[]{-1.1, 1.1, -1.2 - hf - 0.1, -1.1, -1.1, 1.1}, "Snow");
-                atorTampaInsp.criaActor(tampaInsp, new double[]{-0.8, 0.8, 1.2 + hg -0.6, 1.2 + hg + 0.6, -0.8, 0.8}, "Snow");
+                atorTampaInsp.criaActor(tampaInsp, new double[]{-0.4, 0.4, 1.2 + hg -0.6, 1.2 + hg + 0.6, -0.4, 0.4}, "Snow");
+                atorTuboSai.criaActor(tuboSai, new double[]{0.9, 1 + 0.3 + 0.1, 1.2 - altTubo, 1.2, -0.4, 0.4}, "Snow");
+                atorCaixaSaiCh.criaActor(caixaSaiCh, new double[]{0.9, 1 + 2, 1.2, 1.2 + 0.7 + 0.1, -1, 1}, "Snow");
             }
             
             atorTuboEsq.criaActor(tuboEsq, new double[]{-1.1 - mEsq, -0.7, -1.2 + 0.2 + 0.2, 2.15 + 0.7, -0.3, 0.3}, "Snow");
@@ -550,6 +591,8 @@ public class Modelo3D extends JPanel{
                 renWin.GetRenderer().AddActor(atorCalotaSup.getActor());
                 renWin.GetRenderer().AddActor(atorCalotaInf.getActor());
                 renWin.GetRenderer().AddActor(atorTampaInsp.getActor());
+                renWin.GetRenderer().AddActor(atorTuboSai.getActor());
+                renWin.GetRenderer().AddActor(atorCaixaSaiCh.getActor());
             }
         }
         
@@ -585,6 +628,8 @@ public class Modelo3D extends JPanel{
                     atorCalotaSup.cortaActor();
                     atorCalotaInf.cortaActor();
                     atorTampaInsp.cortaActor();
+                    atorTuboSai.cortaActor();
+                    atorCaixaSaiCh.cortaActor();
                 }
             }
             
