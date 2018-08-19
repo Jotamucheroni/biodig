@@ -59,6 +59,63 @@ public class OtimizaBiodigestor {
         }
     }
     
+    public static void calculamLU(double[][] m, double[][] mLU){
+        int i, j, k, n = m.length;
+        double soma;
+        
+        //Calcula a matriz LU (compacta)
+        for( i = 0; i < n; i++)
+        {
+            for( j = i; j < n; j++)
+            {
+                soma = 0;
+
+                for( k = 0; k < i; k++)
+                    soma += mLU[i][k] * mLU[k][j];
+
+                mLU[i][j] = m[i][j] - soma;
+            }
+
+            for( j = i+1; j < n; j++)
+            {
+                soma = 0;
+            
+                for( k = 0; k < i; k++)
+                    soma += mLU[j][k] * mLU[k][i];
+            
+                mLU[j][i] = (m[j][i] - soma) / mLU[i][i];
+            }
+        }
+    }
+     
+    public static void resolveLU(double[][] mLU, double[] b, double[] x){
+        int i, j, n = mLU.length;
+        double soma;
+        double[] y = new double[n];
+        
+        //Solução de L.y = b
+        for( i = 0; i < n; i++)
+        {
+            soma = 0;
+          
+            for( j = 0; j < i; j++)
+                soma += mLU[i][j] * y[j];
+          
+            y[i] = b[i] - soma;
+        }
+        
+        //Solução de U.x = y  
+        for( i = n - 1; i >= 0; i--)
+        {
+            soma = 0;
+            
+            for( j = i + 1; j < n; j++)
+                soma += mLU[i][j] * x[j];
+            
+            x[i] = (y[i] - soma) / mLU[i][i];
+        }
+    }
+    
     public static double funcaoMaisC(Funcao func, double[] x, int pos, double c){
         double[] y = new double[x.length];
         
@@ -262,7 +319,7 @@ public class OtimizaBiodigestor {
         func funcao = new func();
         //FuncaoBiodigestorIndiano funcaoBiodigestor = new FuncaoBiodigestorIndiano();  
         
-        double[][] Hessiana = new double[totalVariaveis][totalVariaveis];
+        double[][] Hessiana = new double[totalVariaveis][totalVariaveis], LU = new double[totalVariaveis][totalVariaveis];
         double[] grad = new double[totalVariaveis];
         double[] d = new double[totalVariaveis];
         double[] x = new double[totalVariaveis];
@@ -270,11 +327,14 @@ public class OtimizaBiodigestor {
         //long inicio = System.currentTimeMillis();
         for(long k = 0; k < 10000000; k++){
             geraVetorX(x, var, s, lambda, pi);
+            gradiente(funcao, x, grad, 0.00000001);
+            
             do{
-                gradiente(funcao, x, grad, 0.00000001);
                 hessiana(funcao, x, Hessiana, 0.00000001);
                 multVet(grad, -1);
-                gaussPivoParcialSemTrocas(Hessiana, grad, d);
+                //gaussPivoParcialSemTrocas(Hessiana, grad, d);
+                calculamLU(Hessiana, LU);
+                resolveLU(LU, grad, d);
                
                 //atualizando alphap
                 menor = 1;
