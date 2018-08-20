@@ -308,33 +308,45 @@ public class OtimizaBiodigestor {
         if(biodig == null)
             return;
         
-        double[] var = biodig.getVarIni(); //new double[] {4,5};//qtdVar
-        double[] s = biodig.getSIni(); //new double[] {0.5,0.5,0.5,0.5,0.5};//QTD_REST_LE
-        double[] lambda = biodig.getLambdaIni(); //new double[qtdRestI];
-        double[] pi = biodig.getPiIni(); //new double[] {0.5,0.5,0.5,0.5,0.5};//QTD_REST_LE
+        double[] var = biodig.getVarIni();
+        double[] s = biodig.getSIni();
+        double[] lambda = biodig.getLambdaIni();
+        double[] pi = biodig.getPiIni();
         double beta = 10;
         double alphap, alphad;
         double menor;
         double epsilon = 0.0001;
         func funcao = new func();
-        //FuncaoBiodigestorIndiano funcaoBiodigestor = new FuncaoBiodigestorIndiano();  
         
         double[][] Hessiana = new double[totalVariaveis][totalVariaveis], LU = new double[totalVariaveis][totalVariaveis];
         double[] grad = new double[totalVariaveis];
         double[] d = new double[totalVariaveis];
         double[] x = new double[totalVariaveis];
         
+        final int maxRep = 9;
+        int rep;
+        
         //long inicio = System.currentTimeMillis();
         for(long k = 0; k < 10000000; k++){
             geraVetorX(x, var, s, lambda, pi);
             gradiente(funcao, x, grad, 0.00000001);
             
+            rep = maxRep;
+            
             do{
-                hessiana(funcao, x, Hessiana, 0.00000001);
+                rep++;
+                
+                if( rep > maxRep )
+                {
+                    rep = 1;
+                    hessiana(funcao, x, Hessiana, 0.00000001);
+                    calculamLU(Hessiana, LU);
+                }
+                
                 multVet(grad, -1);
-                //gaussPivoParcialSemTrocas(Hessiana, grad, d);
-                calculamLU(Hessiana, LU);
                 resolveLU(LU, grad, d);
+                
+                //gaussPivoParcialSemTrocas(Hessiana, grad, d);
                
                 //atualizando alphap
                 menor = 1;
