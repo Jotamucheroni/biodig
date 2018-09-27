@@ -268,26 +268,28 @@ public class Modelo3D extends JPanel{
         super(new BorderLayout());
         tipo = Tipo;
         
-        final double espParede = 0.1, espTopoFundo = 0.1, espGas = 0.1;
+        final double espParede = 0.1, espTopoFundo = 0.1, espGas = 0.1,
+                     Rb = 1,
+                     larguraRevGas = Rb + espGas + 2 * 0.1;
         //Funções---------------------------------------------------------------
         
         //Solo
         vtkImplicitFunction baseSolo     = fechaCilindro(new double[]{0, 2.1, 0}, 
                                                          new double[]{0, 1, 0}, 
-                                                         4, 0.1),
+                                                         Rb + 3, 0.1),
                             espacoBioDig = fechaCilindro(new double[]{0, 2.1, 0}, 
                                                          new double[]{0, 1, 0}, 
-                                                         1.3, 4);
+                                                         larguraRevGas, 4);
         
         //Biomassa
         double espFundo = (tipo == INDIANO || tipo == BATELADA) ? espTopoFundo : 0;
         
         vtkImplicitFunction cilindroBiomassaNormal = geraCilindro(new double[]{0, 0, 0}, 
                                                                   new double[]{0, 1, 0},
-                                                                  1, 2.4, espParede, espFundo, 0),
+                                                                  Rb, 2.4, espParede, espFundo, 0),
                             cilindroAux = fechaCilindro(new double[]{0, 1.2, 0},
                                                         new double[]{0, 1, 0}, 
-                                                        1 - espParede, 2 * espTopoFundo);
+                                                        Rb - espParede, 2 * espTopoFundo);
         
         //Revestimento Gasômetro
         double centroRevGas = 1.75 + espTopoFundo / 2,
@@ -297,20 +299,20 @@ public class Modelo3D extends JPanel{
                
         vtkImplicitFunction cilindroRevGasometro = geraCilindro(new double[]{0, centroRevGas, 0}, 
                                                                 new double[]{0, 1, 0},
-                                                                1 + espGas + 2 * 0.1,
+                                                                larguraRevGas,
                                                                 alturaRevGas, espParede, espTopoFundo, 0);
         
         //Gasômetro
         vtkImplicitFunction cilindroGasometro = geraCilindro(new double[]{0, centroGas, 0}, 
                                                              new double[]{0, 1, 0},
-                                                             1 - espParede + espGas + 0.1, 
+                                                             Rb - espParede + espGas + 0.1, 
                                                              alturaGas, espGas, 0, espGas);
         
         //Parede
         double altParede = 1.5;
         vtkImplicitFunction cilindroParede = fechaCilindro(new double[]{0, -1.2 + espTopoFundo + altParede / 2, 0},
                                                            new double[]{0, 1, 0}, 
-                                                           1 - espParede, altParede);
+                                                           Rb - espParede, altParede);
         vtkPlane corteDir = new vtkPlane(),
                  corteEsq = new vtkPlane();
         
@@ -344,29 +346,29 @@ public class Modelo3D extends JPanel{
                   yDir       = Math.sin(Math.toRadians(60)) * (compDir/2),
                   mDir       = Math.tan(Math.toRadians(30)) * Hdir;
         
-        vtkImplicitFunction tuboEsq = geraCilindro(new double[]{-1 + espParede - xEsq, -2.4/2 + espTopoFundo + 0.3 + 0.1 + yEsq, 0},
+        vtkImplicitFunction tuboEsq = geraCilindro(new double[]{-Rb + espParede - xEsq, -2.4/2 + espTopoFundo + 0.3 + 0.1 + yEsq, 0},
                                                    new double[]{-xi, yi, 0}, 
                                                    0.1, compEsq + 0.15, 0.03, 0, 0),
-                            tuboDir = geraCilindro(new double[]{1 - espParede + xDir, -2.4/2 + espTopoFundo + 0.3 + 0.1 + yDir, 0},
+                            tuboDir = geraCilindro(new double[]{Rb - espParede + xDir, -2.4/2 + espTopoFundo + 0.3 + 0.1 + yDir, 0},
                                                    new double[]{xi, yi, 0}, 
                                                    0.1, compDir + 0.15, 0.03, 0, 0);
         
         //Caixa de entrada
-        vtkImplicitFunction caixaEnt = geraCilindro(new double[]{-1 + espParede - mEsq, 2.1 + 0.5, 0},
+        vtkImplicitFunction caixaEnt = geraCilindro(new double[]{-Rb + espParede - mEsq, 2.1 + 0.5, 0},
                                                     new double[]{0, 1, 0}, 
                                                     0.5, 1, espParede, 0, 0);
         
         //Caixa de saída
-        vtkImplicitFunction caixaSai = geraCilindro(new double[]{1 - espParede + mDir, 2.1 + 0.2, 0},
+        vtkImplicitFunction caixaSai = geraCilindro(new double[]{Rb - espParede + mDir, 2.1 + 0.2, 0},
                                                     new double[]{0, 1, 0}, 
                                                     0.5, 0.4, espParede, 0, 0);
         
         //Fundo da caixa de entrada
-        vtkImplicitFunction caixaEntFundoNormal = fechaCilindro(new double[]{-1 + espParede - mEsq, 2.1 + 0.5, 0},
+        vtkImplicitFunction caixaEntFundoNormal = fechaCilindro(new double[]{-Rb + espParede - mEsq, 2.1 + 0.5, 0},
                                                                 new double[]{0, 1, 0}, 
                                                                 0.5 - espParede, 0.01);
         //Calota superior
-        double D = 2,
+        double D = 2 * Rb,
                hg = D / 4, 
                Rg = ( (D*D / 4) + hg*hg ) / (2*hg);
         
@@ -397,31 +399,31 @@ public class Modelo3D extends JPanel{
         
         //Tubo de saída
         double altTubo = 2.4 / 3 + 0.2 + espTopoFundo;
-        vtkImplicitFunction tuboSaiNormal = geraCilindro(new double[]{1 + 0.3 / 2, 1.2 - altTubo / 2, 0},
+        vtkImplicitFunction tuboSaiNormal = geraCilindro(new double[]{Rb + 0.3 / 2, 1.2 - altTubo / 2, 0},
                                                    new double[]{0, 1, 0},
                                                    0.3 / 2 + espParede, altTubo, espParede, espTopoFundo, 0);
         
-        vtkImplicitFunction furoTuboSai = fechaCilindro(new double[]{1 - espParede / 2, 1.2 - altTubo + espTopoFundo + 0.1, 0},
+        vtkImplicitFunction furoTuboSai = fechaCilindro(new double[]{Rb - espParede / 2, 1.2 - altTubo + espTopoFundo + 0.1, 0},
                                                    new double[]{1, 0, 0},
                                                    0.1, 2 * espParede);
         //Caixa de saída chinês
-        vtkImplicitFunction caixaSaiChNormal = geraCilindro(new double[]{1 - espParede + 1, 1.2 + (0.7 + espTopoFundo) / 2, 0},
+        vtkImplicitFunction caixaSaiChNormal = geraCilindro(new double[]{Rb - espParede + 1, 1.2 + (0.7 + espTopoFundo) / 2, 0},
                                                    new double[]{0, 1, 0},
                                                    1, 0.7 + espTopoFundo, espParede, espTopoFundo, 0);
         
-        vtkImplicitFunction furoSaiCh = fechaCilindro(new double[]{1 + 0.3 / 2, 1.2 + espTopoFundo / 2, 0},
+        vtkImplicitFunction furoSaiCh = fechaCilindro(new double[]{Rb + 0.3 / 2, 1.2 + espTopoFundo / 2, 0},
                                                    new double[]{0, 1, 0},
                                                    0.15, espTopoFundo);
         
         if(tipo == INDIANO || tipo == CHINES)
         {
            
-           tuboEsqFuro = fechaCilindro(new double[]{-1 + espParede - xEsq, -2.4/2 + espTopoFundo + 0.3 + 0.1 + yEsq, 0},
+           tuboEsqFuro = fechaCilindro(new double[]{-Rb + espParede - xEsq, -2.4/2 + espTopoFundo + 0.3 + 0.1 + yEsq, 0},
                                        new double[]{-xi, yi, 0}, 
                                        0.1, compEsq + 0.15);
            
            if(tipo == INDIANO)
-                tuboDirFuro = fechaCilindro(new double[]{1 - espParede + xDir, -2.4/2 + espTopoFundo + 0.3 + 0.1 + yDir, 0},
+                tuboDirFuro = fechaCilindro(new double[]{Rb - espParede + xDir, -2.4/2 + espTopoFundo + 0.3 + 0.1 + yDir, 0},
                                             new double[]{xi, yi, 0}, 
                                             0.1, compDir + 0.15);
         }
@@ -531,8 +533,8 @@ public class Modelo3D extends JPanel{
         //Actor-----------------------------------------------------------------
         
         //Solo
-        Actor atorSolo = new Actor(solo, new double[]{-4.1, 4.1, 0, 2.3, -4.1, 4.1}, "Chocolate"),
-              atorBiomassa = new Actor(cilindroBiomassa, new double[]{-1, 1, -1.2, 1.2, -1, 1}, "Snow"),
+        Actor atorSolo = new Actor(solo, new double[]{-Rb - 3, Rb + 3, 0, 2.3, -Rb - 3, Rb + 3}, "Chocolate"),
+              atorBiomassa = new Actor(cilindroBiomassa, new double[]{-Rb, Rb, -1.2, 1.2, -Rb, Rb}, "Snow"),
               atorRevGas = new Actor(),
               atorGas = new Actor(),
               atorParede = new Actor(),
@@ -549,31 +551,31 @@ public class Modelo3D extends JPanel{
         
         if(tipo == INDIANO || tipo == BATELADA)
         {
-            atorRevGas.criaActor(cilindroRevGas, new double[]{-1.4, 1.4, centroRevGas - alturaRevGas / 2 /*1.1*/, centroRevGas + alturaRevGas / 2 /*2.5*/, -1.4, 1.4}, "Snow");
-            atorGas.criaActor(cilindroGasometro, new double[]{-1.25, 1.25, centroGas - alturaGas / 2/*1.1*/, centroGas + alturaGas / 2 /*2.6*/, -1.25, 1.25}, "Gray");
+            atorRevGas.criaActor(cilindroRevGas, new double[]{-larguraRevGas, larguraRevGas, centroRevGas - alturaRevGas / 2, centroRevGas + alturaRevGas / 2, -larguraRevGas, larguraRevGas}, "Snow");
+            atorGas.criaActor(cilindroGasometro, new double[]{-larguraRevGas + espParede + 0.1, larguraRevGas - espParede - 0.1, centroGas - alturaGas / 2, centroGas + alturaGas / 2, -larguraRevGas + espParede + 0.1, larguraRevGas - espParede - 0.1}, "Gray");
         }
         
         if(tipo == INDIANO || tipo == CHINES)
         {      
             if(tipo == INDIANO)
             {
-                atorParede.criaActor(parede, new double[]{-1, 1, -1.2, 1.2, -1, 1}, "Snow");
-                atorTuboDir.criaActor(tuboDir, new double[]{1 - espParede - 0.2, 1.1 + mDir, -1.2 + 0.2 + 0.2, 2.15 + 0.2, -0.3, 0.3}, "Snow");
-                atorCaixaSai.criaActor(caixaSai, new double[]{1 - espParede + mDir - 0.6 , 1 - espParede + mDir + 0.6, 2, 2.1 + 0.5, -0.6, 0.6}, "Snow"); 
+                atorParede.criaActor(parede, new double[]{-Rb, Rb, -1.2, 1.2, -Rb, Rb}, "Snow");
+                atorTuboDir.criaActor(tuboDir, new double[]{Rb - espParede - 0.2, Rb + 0.1 + mDir, -1.2 + 0.2 + 0.2, 2.15 + 0.2, -0.3, 0.3}, "Snow");
+                atorCaixaSai.criaActor(caixaSai, new double[]{Rb - espParede + mDir - 0.6 , Rb - espParede + mDir + 0.6, 2, 2.1 + 0.5, -0.6, 0.6}, "Snow"); 
             }
             
             if(tipo == CHINES)
             {
-                atorCalotaSup.criaActor(calotaSup, new double[]{-1.1, 1.1, 1.1, 1.2 + hg + 0.1, -1.1, 1.1}, "Snow");
-                atorCalotaInf.criaActor(calotaInf, new double[]{-1.1, 1.1, -1.2 - hf - 0.1, -1.1, -1.1, 1.1}, "Snow");
+                atorCalotaSup.criaActor(calotaSup, new double[]{-Rb, Rb, 1.1, 1.2 + hg + 0.1, -Rb, Rb}, "Snow");
+                atorCalotaInf.criaActor(calotaInf, new double[]{-Rb, Rb, -1.2 - hf - 0.1, -1.1, -Rb, Rb}, "Snow");
                 atorTampaInsp.criaActor(tampaInsp, new double[]{-0.3 - espParede, 0.3 + espParede, 1.2, 1.2 + hg + 0.4 + espTopoFundo, -0.3 - espParede, 0.3 + espParede}, "Snow");
-                atorTuboSai.criaActor(tuboSai, new double[]{1 - espParede, 1 + 0.3 + espParede, 1.2 - altTubo, 1.2, -0.3 - espParede, 0.3 + espParede}, "Snow");
-                atorCaixaSaiCh.criaActor(caixaSaiCh, new double[]{1 - espParede, 1 + 2, 1.2, 1.2 + 0.7 + espTopoFundo, -1, 1}, "Snow");
+                atorTuboSai.criaActor(tuboSai, new double[]{Rb - espParede, Rb + 0.3 + espParede, 1.2 - altTubo, 1.2, -0.3 - espParede, 0.3 + espParede}, "Snow");
+                atorCaixaSaiCh.criaActor(caixaSaiCh, new double[]{Rb - espParede, Rb + 2, 1.2, 1.2 + 0.7 + espTopoFundo, -1, 1}, "Snow");
             }
             
-            atorTuboEsq.criaActor(tuboEsq, new double[]{-1.1 - mEsq, -1 + espParede + 0.2, -1.2 + 0.2 + 0.2, 2.15 + 0.7, -0.3, 0.3}, "Snow");
-            atorCaixaEnt.criaActor(caixaEnt, new double[]{-1 + espParede - mEsq - 0.6, -1 + espParede - mEsq + 0.6, 2, 2.1 + 1.1, -0.6, 0.6}, "Snow");
-            atorCaixaEntFundo.criaActor(caixaEntFundo, new double[]{-1 + espParede - mEsq - 0.5, -1 + espParede - mEsq + 0.5, 2 + 0.3, 2.1 + 0.8, -0.5, 0.5}, "Snow");
+            atorTuboEsq.criaActor(tuboEsq, new double[]{-Rb - 0.1 - mEsq, -Rb + espParede + 0.2, -1.2 + 0.2 + 0.2, 2.15 + 0.7, -0.3, 0.3}, "Snow");
+            atorCaixaEnt.criaActor(caixaEnt, new double[]{-Rb + espParede - mEsq - 0.6, -Rb + espParede - mEsq + 0.6, 2, 2.1 + 1.1, -0.6, 0.6}, "Snow");
+            atorCaixaEntFundo.criaActor(caixaEntFundo, new double[]{-Rb + espParede - mEsq - 0.5, -Rb + espParede - mEsq + 0.5, 2 + 0.3, 2.1 + 0.8, -0.5, 0.5}, "Snow");
         }
         
         //----------------------------------------------------------------------
