@@ -82,7 +82,7 @@ public class Modelo3D extends JPanel{
             
             sample.SetImplicitFunction(funcaoOriginal);
             sample.SetModelBounds(xMin, xMax, yMin, yMax, zMin, zMax);
-            sample.SetSampleDimensions(80, 80, 80);
+            sample.SetSampleDimensions(100, 100, 100);
             sample.ComputeNormalsOff();
             
             surface.SetInputConnection(sample.GetOutputPort());
@@ -642,6 +642,7 @@ public class Modelo3D extends JPanel{
         //----------------------------------------------------------------------
         
         renWin = new vtkPanel();
+        
         renWin.GetRenderer().AddActor(atorSolo.getActor());
         renWin.GetRenderer().AddActor(atorBiomassa.getActor());
         
@@ -717,6 +718,9 @@ public class Modelo3D extends JPanel{
             renWin.repaint();
         });
  
+        renWin.GetRenderer().GetActiveCamera().SetPosition(0, 0, 25);
+        renWin.repaint();
+        
         add(renWin, BorderLayout.CENTER);
         add(exitButton, BorderLayout.SOUTH);
     }
