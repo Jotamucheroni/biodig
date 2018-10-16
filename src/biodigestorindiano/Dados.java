@@ -482,6 +482,8 @@ public class Dados extends javax.swing.JFrame {
             entradas[3].setText("4");
             entradas[4].setText("5");
             entradas[5].setText("0.15");
+            
+            jRadioButton1.setSelected(true);
         }
     }
         
@@ -559,7 +561,7 @@ public class Dados extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         //System.exit(0);
-        Modelo3D.iniciar(jComboBox2.getSelectedIndex());
+        Modelo3D.iniciar(jComboBox2.getSelectedIndex(), null);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -820,6 +822,9 @@ public class Dados extends javax.swing.JFrame {
                         resultados.janelaDados = this;
                         resultados.setLocationRelativeTo(null);
                     }
+                    
+                    resultados.tipo = jComboBox2.getSelectedIndex();
+                    resultados.biodig = biodig;
 
                     int numParam = biodig.params.length, i;
 

@@ -25,6 +25,10 @@ public abstract class Biodigestor {
             this.unidade = unidade;
         }
         
+        double getValor(){
+            return valor;
+        }
+        
         String getRotulo(){
             return rotulo;
         }

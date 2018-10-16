@@ -264,23 +264,66 @@ public class Modelo3D extends JPanel{
         return calota;
     }
     
-    public Modelo3D(int Tipo) {
+    public Modelo3D(int Tipo, Biodigestor biodig) {
         super(new BorderLayout());
         tipo = Tipo;
         
-        final double espParede = 0.1, espTopoFundo = 0.1, espGas = 0.1,
-                     Rb = 1, Hb = 2.4, altOciRev = 1.2, altOciGas = 1.2,
-                     Re = 0.5, Rs = 1, hs = 0.7,
-                     larguraRevGas = Rb + espGas + 2 * 0.1;
+        double espParede = 0.1, espTopoFundo = 0.1, espGas = 0.1,
+               Rb = biodig.params[0].getValor() / 2 + espParede, Hb, altOciRev = 1.2, altOciGas = 1.3,
+               Re = 0.5, Rs = 1, hs = 0.7,
+               alturaSolo,
+               larguraRevGas = Rb + espGas + 2 * 0.1,
+               a = 0.2;
+        
+        //Parâmetros------------------------------------------------------------
+        
+        //----------------------------------------------------------------------
+        if(tipo == CHINES)
+        {
+            double hg = Rb / 2; // (2 * Rb) / 4
+            
+            Hb = biodig.params[1].getValor();
+            Re = biodig.params[11].getValor() / 2 + espParede;
+            Rs = biodig.params[9].getValor() / 2 + espParede;
+            hs = biodig.params[8].getValor() + espTopoFundo;
+            alturaSolo = Hb / 2 + hg + a;
+        }
+        else
+        {
+            if(tipo == INDIANO)
+            {
+                double De = (4 * biodig.params[19].getValor() /*v*/) / (Math.PI * (0.5 - 0.1)),
+                       h2 = biodig.params[11].getValor();
+                De = Math.sqrt( (De > 0) ? De : 0 );
+                
+                Hb = biodig.params[3].getValor() + espTopoFundo;
+                altOciRev = altOciGas = biodig.params[10].getValor() + h2; //h1 + h2
+                Re = De / 2 + espParede;
+                alturaSolo = Hb / 2 + h2;
+            }
+            else //Batelada
+            {
+                double h2 = biodig.params[8].getValor();
+                
+                Hb = biodig.params[1].getValor() - biodig.params[8].getValor(); //H - h2
+                Hb += espTopoFundo;
+                altOciGas = biodig.params[7].getValor() + h2; //h1 + h2
+                altOciRev = altOciGas - 0.1;
+                alturaSolo = Hb / 2 + h2;
+            }
+        }
         //Funções---------------------------------------------------------------
         
         //Solo
-        vtkImplicitFunction baseSolo     = fechaCilindro(new double[]{0, 2.1, 0}, 
+        vtkImplicitFunction baseSolo     = fechaCilindro(new double[]{0, alturaSolo, 0}, 
                                                          new double[]{0, 1, 0}, 
                                                          Rb + Re + 2.5, 0.1),
-                            espacoBioDig = fechaCilindro(new double[]{0, 2.1, 0}, 
+                            espacoBioDig = fechaCilindro(new double[]{0, alturaSolo, 0}, 
                                                          new double[]{0, 1, 0}, 
-                                                         larguraRevGas, 4);
+                                                         (tipo == CHINES) ? 0.3 + espParede : larguraRevGas, 4),
+                            espacoCaixaSaiCh = fechaCilindro(new double[]{Rb - espParede + Rs, alturaSolo, 0}, 
+                                                             new double[]{0, 1, 0}, 
+                                                             Rs, 4);
         
         //Biomassa
         double espFundo = (tipo == INDIANO || tipo == BATELADA) ? espTopoFundo : 0;
@@ -304,13 +347,13 @@ public class Modelo3D extends JPanel{
                                                                 alturaRevGas, espParede, espTopoFundo, 0);
         
         //Gasômetro
-        vtkImplicitFunction cilindroGasometro = geraCilindro(new double[]{0, centroGas, 0}, 
-                                                             new double[]{0, 1, 0},
-                                                             Rb - espParede + espGas + 0.1, 
-                                                             alturaGas, espGas, 0, espGas);
+        vtkImplicitFunction cilindroGasometroNormal = geraCilindro(new double[]{0, centroGas, 0}, 
+                                                                   new double[]{0, 1, 0},
+                                                                   Rb - espParede + espGas + 0.1, 
+                                                                   alturaGas, espGas, 0, espGas);
         
         //Parede
-        double altParede = Hb - espTopoFundo;
+        double altParede = Hb;
         vtkImplicitFunction cilindroParede = fechaCilindro(new double[]{0, -Hb / 2 + espTopoFundo + altParede / 2, 0},
                                                            new double[]{0, 1, 0}, 
                                                            Rb - espParede, altParede);
@@ -326,6 +369,11 @@ public class Modelo3D extends JPanel{
             corteEsq.SetNormal(-1, 0, 0);
         }
         
+        //Guia
+        vtkImplicitFunction guia = fechaCilindro(new double[]{0, Hb / 2 + espTopoFundo + 0.75 * alturaGas, 0},
+                                                 new double[]{0, 1, 0}, 
+                                                 0.05, 1.5 * alturaGas);
+        
         //Tubo esquerdo e direito
         vtkImplicitFunction tuboEsqFuro = new vtkCylinder(),
                             tuboDirFuro = new vtkCylinder();
@@ -336,7 +384,7 @@ public class Modelo3D extends JPanel{
                     - espessura do fundo - e (ver Ortolani, 1991) - raio do cano + 
                     + a (ver Ortolani, 1991)
                   */
-                  Hesq       = 2.15 + Hb/2 - espTopoFundo - 0.3 - 0.1 + 0.5,
+                  Hesq       = alturaSolo + 0.05 + Hb/2 - espTopoFundo - 0.3 - 0.1 + 0.5,
                   compEsq    = Hesq / Math.cos(Math.toRadians(30)),
                   xEsq       = Math.cos(Math.toRadians(60)) * (compEsq/2),
                   yEsq       = Math.sin(Math.toRadians(60)) * (compEsq/2),
@@ -355,17 +403,17 @@ public class Modelo3D extends JPanel{
                                                    0.1, compDir + 0.15, 0.03, 0, 0);
         
         //Caixa de entrada
-        vtkImplicitFunction caixaEnt = geraCilindro(new double[]{-Rb + espParede - mEsq, 2.1 + 0.5, 0},
+        vtkImplicitFunction caixaEnt = geraCilindro(new double[]{-Rb + espParede - mEsq, alturaSolo + 0.5, 0},
                                                     new double[]{0, 1, 0}, 
                                                     Re, 1, espParede, 0, 0);
         
         //Caixa de saída
-        vtkImplicitFunction caixaSai = geraCilindro(new double[]{Rb - espParede + mDir, 2.1 + 0.2, 0},
+        vtkImplicitFunction caixaSai = geraCilindro(new double[]{Rb - espParede + mDir, alturaSolo + 0.2, 0},
                                                     new double[]{0, 1, 0}, 
                                                     0.5, 0.4, espParede, 0, 0);
         
         //Fundo da caixa de entrada
-        vtkImplicitFunction caixaEntFundoNormal = fechaCilindro(new double[]{-Rb + espParede - mEsq, 2.1 + 0.5, 0},
+        vtkImplicitFunction caixaEntFundoNormal = fechaCilindro(new double[]{-Rb + espParede - mEsq, alturaSolo + 0.5, 0},
                                                                 new double[]{0, 1, 0}, 
                                                                 Re - espParede, 0.01);
         //Calota superior
@@ -391,7 +439,7 @@ public class Modelo3D extends JPanel{
         //Tampa de inspeção
         vtkImplicitFunction tampaInspNormal = geraCilindro(new double[]{0, Hb / 2 + hg, 0},
                                                            new double[]{0, 1, 0},
-                                                           0.3 + espParede, 2 * (0.2 + 0.2 + espTopoFundo),
+                                                           0.3 + espParede, 2 * (0.2 + a + espTopoFundo),
                                                            espParede, 0, espTopoFundo);
         
         vtkSphere corteTampa = new vtkSphere();
@@ -439,6 +487,9 @@ public class Modelo3D extends JPanel{
         soloNormal.AddFunction(baseSolo);
         soloNormal.AddFunction(espacoBioDig);
         
+        if(tipo == CHINES)
+            soloNormal.AddFunction(espacoCaixaSaiCh);
+        
         vtkImplicitBoolean solo = new vtkImplicitBoolean();
         solo.SetOperationTypeToDifference();
         solo.AddFunction(soloNormal);
@@ -467,6 +518,11 @@ public class Modelo3D extends JPanel{
                 cilindroBiomassa.AddFunction(furoTuboSai);
         }
         
+        //Gasômetro
+        vtkImplicitBoolean cilindroGasometro = new vtkImplicitBoolean();
+        cilindroGasometro.SetOperationTypeToDifference();
+        cilindroGasometro.AddFunction(cilindroGasometroNormal);
+        
         //Parede
         vtkImplicitBoolean parede = new vtkImplicitBoolean();
         
@@ -476,6 +532,8 @@ public class Modelo3D extends JPanel{
             parede.AddFunction(cilindroParede);
             parede.AddFunction(corteDir);
             parede.AddFunction(corteEsq);
+            
+            cilindroGasometro.AddFunction(guia);
         }
         
         //Revestimento Gasômetro
@@ -534,11 +592,12 @@ public class Modelo3D extends JPanel{
         //Actor-----------------------------------------------------------------
         
         //Solo
-        Actor atorSolo = new Actor(solo, new double[]{-Rb - Re - 3, Rb + Re + 3, 0, 2.3, -Rb - Re - 3, Rb + Re + 3}, "Chocolate"),
+        Actor atorSolo = new Actor(solo, new double[]{-Rb - Re - 3, Rb + Re + 3, 0, alturaSolo + 0.2, -Rb - Re - 3, Rb + Re + 3}, "Chocolate"),
               atorBiomassa = new Actor(cilindroBiomassa, new double[]{-Rb, Rb, -Hb / 2, Hb / 2, -Rb, Rb}, "Snow"),
               atorRevGas = new Actor(),
               atorGas = new Actor(),
               atorParede = new Actor(),
+              atorGuia = new Actor(),
               atorTuboEsq = new Actor(),
               atorTuboDir = new Actor(),
               atorCaixaEnt = new Actor(),
@@ -560,23 +619,24 @@ public class Modelo3D extends JPanel{
         {      
             if(tipo == INDIANO)
             {
-                atorParede.criaActor(parede, new double[]{-Rb, Rb, -Hb / 2, Hb / 2, -Rb, Rb}, "Snow");
-                atorTuboDir.criaActor(tuboDir, new double[]{Rb - espParede - 0.2, Rb + 0.1 + mDir, -Hb/2, 2.15 + 0.2, -0.3, 0.3}, "Snow");
-                atorCaixaSai.criaActor(caixaSai, new double[]{Rb - espParede + mDir - 0.6 , Rb - espParede + mDir + 0.6, 2, 2.1 + 0.5, -0.6, 0.6}, "Snow"); 
+                atorParede.criaActor(parede, new double[]{-Rb, Rb, -Hb / 2, Hb / 2 + espTopoFundo, -Rb, Rb}, "Snow");
+                atorGuia.criaActor(guia, new double[]{-0.05, 0.05, Hb / 2 + espTopoFundo, Hb / 2 + espTopoFundo + 1.5 * alturaGas + 0.1, -0.05, 0.05}, "Snow");
+                atorTuboDir.criaActor(tuboDir, new double[]{Rb - espParede - 0.2, Rb + 0.1 + mDir, -Hb/2, alturaSolo + 0.05 + 0.2, -0.3, 0.3}, "Snow");
+                atorCaixaSai.criaActor(caixaSai, new double[]{Rb - espParede + mDir - 0.6 , Rb - espParede + mDir + 0.6, alturaSolo - 0.1, alturaSolo + 0.5, -0.6, 0.6}, "Snow"); 
             }
             
             if(tipo == CHINES)
             {
                 atorCalotaSup.criaActor(calotaSup, new double[]{-Rb, Rb, Hb / 2 - 0.1, Hb / 2 + hg + 0.1, -Rb, Rb}, "Snow");
                 atorCalotaInf.criaActor(calotaInf, new double[]{-Rb, Rb, -Hb / 2 - hf - 0.1, -Hb / 2 + 0.1, -Rb, Rb}, "Snow");
-                atorTampaInsp.criaActor(tampaInsp, new double[]{-0.3 - espParede, 0.3 + espParede, Hb / 2, Hb / 2 + hg + 0.4 + espTopoFundo, -0.3 - espParede, 0.3 + espParede}, "Snow");
+                atorTampaInsp.criaActor(tampaInsp, new double[]{-0.3 - espParede, 0.3 + espParede, Hb / 2, Hb / 2 + hg + a + 0.2 + espTopoFundo, -0.3 - espParede, 0.3 + espParede}, "Snow");
                 atorTuboSai.criaActor(tuboSai, new double[]{Rb - espParede, Rb + 0.3 + espParede, Hb / 2 - altTubo, Hb / 2, -0.3 - espParede, 0.3 + espParede}, "Snow");
-                atorCaixaSaiCh.criaActor(caixaSaiCh, new double[]{Rb - espParede, Rb + 2 * Rs, Hb / 2 - 0.1, Hb / 2 + hs + espTopoFundo, -Rs, Rs}, "Snow");
+                atorCaixaSaiCh.criaActor(caixaSaiCh, new double[]{Rb - espParede, Rb + 2 * Rs, Hb / 2 - 0.1, Hb / 2 + hs + espTopoFundo + 0.1, -Rs, Rs}, "Snow");
             }
             
-            atorTuboEsq.criaActor(tuboEsq, new double[]{-Rb - 0.1 - mEsq, -Rb + espParede + 0.2, -Hb / 2, 2.15 + 0.7, -0.3, 0.3}, "Snow");
-            atorCaixaEnt.criaActor(caixaEnt, new double[]{-Rb + espParede - mEsq - Re - 0.1, -Rb + espParede - mEsq + Re + 0.1, 2, 2.1 + 1.1, -Re - 0.1, Re + 0.1}, "Snow");
-            atorCaixaEntFundo.criaActor(caixaEntFundo, new double[]{-Rb + espParede - mEsq - Re, -Rb + espParede - mEsq + Re, 2 + 0.3, 2.1 + 0.8, -Re, Re}, "Snow");
+            atorTuboEsq.criaActor(tuboEsq, new double[]{-Rb - 0.1 - mEsq, -Rb + espParede + 0.2, -Hb / 2, alturaSolo + 0.05 + 0.7, -0.3, 0.3}, "Snow");
+            atorCaixaEnt.criaActor(caixaEnt, new double[]{-Rb + espParede - mEsq - Re - 0.1, -Rb + espParede - mEsq + Re + 0.1, alturaSolo - 0.1, alturaSolo + 1.1, -Re - 0.1, Re + 0.1}, "Snow");
+            atorCaixaEntFundo.criaActor(caixaEntFundo, new double[]{-Rb + espParede - mEsq - Re, -Rb + espParede - mEsq + Re, alturaSolo - 0.1 + 0.3, alturaSolo + 0.8, -Re, Re}, "Snow");
         }
         
         //----------------------------------------------------------------------
@@ -600,6 +660,7 @@ public class Modelo3D extends JPanel{
             if(tipo == INDIANO)
             {
                 renWin.GetRenderer().AddActor(atorParede.getActor());
+                renWin.GetRenderer().AddActor(atorGuia.getActor());
                 renWin.GetRenderer().AddActor(atorTuboDir.getActor());
                 renWin.GetRenderer().AddActor(atorCaixaSai.getActor());
             }
@@ -637,6 +698,7 @@ public class Modelo3D extends JPanel{
                 if(tipo == INDIANO)
                 {
                     atorParede.cortaActor();
+                    atorGuia.cortaActor();
                     atorTuboDir.cortaActor();
                     atorCaixaSai.cortaActor();
                 }
@@ -659,7 +721,7 @@ public class Modelo3D extends JPanel{
         add(exitButton, BorderLayout.SOUTH);
     }
  
-    public static void iniciar(int tipo) {
+    public static void iniciar(int tipo, Biodigestor biodig) {
         SwingUtilities.invokeLater( () ->
             {
                 vtkNativeLibrary.LoadAllNativeLibraries();
@@ -667,7 +729,7 @@ public class Modelo3D extends JPanel{
                 JFrame frame = new JFrame("Biodigestor 3D");
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 frame.getContentPane().setLayout(new BorderLayout());
-                frame.getContentPane().add(new Modelo3D(tipo), BorderLayout.CENTER);
+                frame.getContentPane().add(new Modelo3D(tipo, biodig), BorderLayout.CENTER);
                 frame.setSize(800, 800);
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
