@@ -83,6 +83,9 @@ public class OtimizaBiodigestor {
                 for( k = 0; k < i; k++)
                     soma += mLU[j][k] * mLU[k][i];
             
+                if(mLU[i][i] == 0)
+                    mLU[i][i] +=  0.0001;
+                   
                 mLU[j][i] = (m[j][i] - soma) / mLU[i][i];
             }
         }
@@ -323,10 +326,11 @@ public class OtimizaBiodigestor {
         double[] d = new double[totalVariaveis];
         double[] x = new double[totalVariaveis];
         
-        final int maxRep = 9;
+        final int maxRep = 1;
         int rep;
         
-        //long inicio = System.currentTimeMillis();
+        long inicio = System.currentTimeMillis();
+        
         for(long k = 0; k < 10000000; k++){
             geraVetorX(x, var, s, lambda, pi);
             gradiente(funcao, x, grad, 0.00000001);
@@ -346,6 +350,7 @@ public class OtimizaBiodigestor {
                 multVet(grad, -1);
                 resolveLU(LU, grad, d);
                 
+                //hessiana(funcao, x, Hessiana, 0.00000001);
                 //gaussPivoParcialSemTrocas(Hessiana, grad, d);
                
                 //atualizando alphap
@@ -399,8 +404,9 @@ public class OtimizaBiodigestor {
             if(mi < 0.000000001)
                 mi = (mi * 2) * 10000000;
         }
-        //long fim = System.currentTimeMillis();
-        //System.out.println(fim - inicio);
+        
+        long fim = System.currentTimeMillis();
+        System.out.println(fim - inicio);
 
         biodig.determinaSolucao(var);
     }
