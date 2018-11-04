@@ -326,7 +326,7 @@ public class OtimizaBiodigestor {
         double[] d = new double[totalVariaveis];
         double[] x = new double[totalVariaveis];
         
-        final int maxRep = 1;
+        final int maxRep = 7;
         int rep;
         
         long inicio = System.currentTimeMillis();
