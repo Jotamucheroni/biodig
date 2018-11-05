@@ -1,5 +1,14 @@
 package biodigestorindiano;
 
+import javax.swing.JFileChooser;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.PdfWriter;
+
 /**
  *
  * @author WELL1NGTON
@@ -129,6 +138,7 @@ public class Resultados extends javax.swing.JFrame {
         jLabel43 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Informações para montagem do Biodigestor"));
 
@@ -232,6 +242,13 @@ public class Resultados extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setText("PDF");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -245,8 +262,10 @@ public class Resultados extends javax.swing.JFrame {
                                 .addComponent(jLabel1)
                                 .addGap(18, 18, 18))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
                                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(254, 254, 254)))
+                                .addGap(210, 210, 210)))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -395,7 +414,9 @@ public class Resultados extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 524, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton2)
+                            .addComponent(jButton3))))
                 .addGap(12, 12, 12)
                 .addComponent(jButton1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -434,10 +455,48 @@ public class Resultados extends javax.swing.JFrame {
         Modelo3D.iniciar(tipo, biodig);
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        JFileChooser nav = new JFileChooser();
+        
+        if( nav.showSaveDialog(this) == JFileChooser.APPROVE_OPTION )
+        {
+            //Criação do documento
+            Document document = new Document();
+
+            try {
+
+                    PdfWriter.getInstance(document, new FileOutputStream(nav.getCurrentDirectory().toString() + "/" + nav.getSelectedFile().getName()));
+                    document.open();
+
+                    // adicionando coisas no documento
+                    Paragraph tit = new Paragraph("Informações para construção do biodigestor\n\n");
+                    tit.setAlignment(1);
+                    document.add(tit);
+                    Image modelo = Image.getInstance(getClass().getResource("/imagens/" + biodig.getNomeImagem()));
+                    modelo.scalePercent(50);
+                    modelo.setAlignment(1);
+                    document.add(modelo);
+                    document.add(new Paragraph("\n\n"));
+                    for(Biodigestor.Parametro param : biodig.params) {
+                        document.add(new Paragraph(param.getRotulo() + " " + param.getValorFormatado()));
+                    }
+            }
+            catch(DocumentException de) {
+                    System.err.println(de.getMessage());
+            }
+            catch(IOException ioe) {
+                    System.err.println(ioe.getMessage());
+            }
+
+            document.close();
+        }   
+    }//GEN-LAST:event_jButton3ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

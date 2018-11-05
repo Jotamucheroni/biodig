@@ -329,7 +329,7 @@ public class OtimizaBiodigestor {
         final int maxRep = 7;
         int rep;
         
-        long inicio = System.currentTimeMillis();
+        //long inicio = System.currentTimeMillis();
         
         for(long k = 0; k < 10000000; k++){
             geraVetorX(x, var, s, lambda, pi);
@@ -405,8 +405,8 @@ public class OtimizaBiodigestor {
                 mi = (mi * 2) * 10000000;
         }
         
-        long fim = System.currentTimeMillis();
-        System.out.println(fim - inicio);
+        //long fim = System.currentTimeMillis();
+        //System.out.println(fim - inicio);
 
         biodig.determinaSolucao(var);
     }
