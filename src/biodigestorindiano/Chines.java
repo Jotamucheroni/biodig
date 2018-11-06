@@ -158,4 +158,10 @@ public class Chines extends Biodigestor {
         
         nomeImagem = "chines.png";
     }
+    
+    @Override
+    final String getNome()
+    {
+        return "chinês";
+    }
 }

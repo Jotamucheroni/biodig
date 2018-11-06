@@ -90,4 +90,6 @@ public abstract class Biodigestor {
     abstract void inicializaFuncoes();
     abstract void inicializaParametros();
     abstract void determinaSolucao(double[] solucao);
+    
+    abstract String getNome();
 }

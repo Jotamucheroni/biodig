@@ -1,12 +1,17 @@
 package biodigestorindiano;
 
+import com.itextpdf.text.Chunk;
 import javax.swing.JFileChooser;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
@@ -469,17 +474,35 @@ public class Resultados extends javax.swing.JFrame {
                     document.open();
 
                     // adicionando coisas no documento
-                    Paragraph tit = new Paragraph("Informações para construção do biodigestor\n\n");
-                    tit.setAlignment(1);
-                    document.add(tit);
+                    Paragraph titulo = new Paragraph("Informações para construção do biodigestor " + biodig.getNome() + "\n\n");
+                    titulo.getFont().setSize(20f);
+                    titulo.getFont().setStyle("bold");
+                    titulo.setAlignment(Element.ALIGN_CENTER);
+                    document.add(titulo);
+                    Paragraph descr = new Paragraph("Figura - representação esquemática do biodigestor\n");
+                    descr.setAlignment(Element.ALIGN_CENTER);
+                    document.add(descr);
                     Image modelo = Image.getInstance(getClass().getResource("/imagens/" + biodig.getNomeImagem()));
                     modelo.scalePercent(50);
-                    modelo.setAlignment(1);
+                    modelo.setAlignment(Element.ALIGN_CENTER);
                     document.add(modelo);
-                    document.add(new Paragraph("\n\n"));
+                    Paragraph legenda = new Paragraph("\n\nTabela - Parâmetros e valores\n\n");
+                    legenda.setAlignment(Element.ALIGN_CENTER);
+                    document.add(legenda);
+                    PdfPTable table = new PdfPTable(2);
+                    table.setWidths(new float[]{3.4f, 1});
+                    Phrase primCol = new Phrase("Parâmetros"), secCol = new Phrase("Valores");
+                    primCol.getFont().setStyle("bold");
+                    secCol.getFont().setStyle("bold");
+                    table.addCell(primCol);
+                    table.addCell(secCol);
+                    table.setHeaderRows(1);
                     for(Biodigestor.Parametro param : biodig.params) {
-                        document.add(new Paragraph(param.getRotulo() + " " + param.getValorFormatado()));
+                        table.addCell(param.getRotulo());
+                        table.addCell(param.getValorFormatado());
+                        //document.add(new Paragraph(param.getRotulo() + "\t\t\t" + param.getValorFormatado()));
                     }
+                    document.add(table);
             }
             catch(DocumentException de) {
                     System.err.println(de.getMessage());

@@ -175,4 +175,10 @@ public class Indiano extends Biodigestor {
         
         nomeImagem = "indiano.png";
     }
+    
+    @Override
+    final String getNome()
+    {
+        return "indiano";
+    }
 }

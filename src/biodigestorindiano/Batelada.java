@@ -317,4 +317,10 @@ public class Batelada extends Biodigestor{
         
         nomeImagem = "batelada.png";
     }
+    
+    @Override
+    final String getNome()
+    {
+        return "batelada";
+    }
 }
