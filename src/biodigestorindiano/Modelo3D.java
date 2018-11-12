@@ -728,7 +728,11 @@ public class Modelo3D extends JPanel{
     public static void iniciar(int tipo, Biodigestor biodig) {
         SwingUtilities.invokeLater( () ->
             {
-                vtkNativeLibrary.LoadAllNativeLibraries();
+                if(!vtkNativeLibrary.LoadAllNativeLibraries())
+                {
+                    javax.swing.JOptionPane.showMessageDialog(null, "Por favor, instale em seu sistemas as bibliotecas dinâmicas do VTK e configure a path","Erro ao tentar carregar bibliotecas gráficas",javax.swing.JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 
                 JFrame frame = new JFrame("Biodigestor 3D");
                 frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
